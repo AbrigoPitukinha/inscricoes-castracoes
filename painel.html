@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel da Cidade – Abrigo Pitukinha</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    const CONFIG = {
+      supabaseUrl: "https://nwmajgtiyxejeuwhkhbk.supabase.co",
+      supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8",
+      cidade:      "Itatiba",
+      dataEvento:  "28/06/2025",
+      senhaPainel: "pitukinha123"  // <-- DEFINA A SENHA DO PAINEL AQUI!
+    };
+  </script>
+  <style>
+    :root {
+      --verde:   #1a7a4a;
+      --verde-cl:#e8f5ee;
+      --laranja: #f5a623;
+      --cinza:   #f4f6f4;
+      --texto:   #1c2b1e;
+      --borda:   #ccd8cc;
+      --erro:    #c0392b;
+      --azul:    #2980b9;
+      --radius:  12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: var(--cinza); color: var(--texto); min-height: 100vh; }
+
+    /* Estado Bloqueado por Padrão */
+    #conteudo-painel { display: none; }
+    #tela-bloqueio { 
+      display: flex; flex-direction: column; align-items: center; justify-content: center; 
+      min-height: 100vh; padding: 20px; text-align: center; background: var(--cinza);
+    }
+    .card-bloqueio {
+      background: white; padding: 40px 30px; border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 400px; width: 100%;
+    }
+    .btn-senha {
+      background: var(--verde); color: white; border: none; padding: 12px 20px;
+      border-radius: 8px; font-weight: 800; cursor: pointer; margin-top: 15px; width: 100%;
+    }
+
+    header {
+      background: var(--verde); color: white; padding: 24px 20px; text-align: center;
+    }
+    header h1 { font-family: 'Fraunces', serif; font-size: 1.6rem; }
+    header p { opacity: 0.85; margin-top: 6px; font-size: 0.9rem; }
+    .badge { display: inline-block; margin-top: 10px; background: var(--laranja); color: #1c2b1e; font-weight: 800; padding: 4px 16px; border-radius: 99px; font-size: 0.85rem; }
+
+    .container { max-width: 960px; margin: 24px auto; padding: 0 16px; }
+
+    .card {
+      background: white; border-radius: var(--radius);
+      box-shadow: 0 2px 18px rgba(26,122,74,0.08); padding: 24px; margin-bottom: 20px;
+    }
+
+    /* ── RESUMO ── */
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .stat { background: var(--verde-cl); border-radius: 10px; padding: 20px; text-align: center; }
+    .stat .num { font-size: 2rem; font-weight: 900; color: var(--verde); }
+    .stat .leg { font-size: 0.78rem; font-weight: 700; color: #557055; text-transform: uppercase; margin-top: 4px; }
+
+    /* ── AÇÕES ── */
+    .acoes { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      flex: 1; min-width: 180px; padding: 14px 16px; border: none; border-radius: 10px;
+      font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.97); }
+    .btn-todos { background: var(--verde); color: white; }
+    .btn-csv   { background: #eaf0ea; color: var(--verde); border: 2px solid var(--borda); }
+
+    /* ── LISTA ── */
+    .sec-title {
+      font-family: 'Fraunces', serif; font-size: 1rem; color: var(--verde);
+      margin-bottom: 14px; border-bottom: 2px solid var(--verde-cl); padding-bottom: 8px;
+    }
+
+    .busca {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--borda); border-radius: 8px;
+      font-family: 'Nunito', sans-serif; font-size: 1rem; margin-bottom: 16px;
+    }
+    .busca:focus { outline: none; border-color: var(--verde); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    thead th {
+      background: var(--verde); color: white; padding: 10px 12px; text-align: left;
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    thead th:first-child { border-radius: 8px 0 0 0; }
+    thead th:last-child  { border-radius: 0 8px 0 0; }
+    tbody tr { border-bottom: 1px solid #e8ede8; transition: background 0.15s; }
+    tbody tr:hover { background: var(--verde-cl); }
+    td { padding: 10px 12px; vertical-align: middle; }
+    td:last-child { white-space: nowrap; text-align: right; }
+    .num-tag {
+      background: var(--verde); color: white; font-weight: 800; font-size: 0.75rem;
+      padding: 2px 8px; border-radius: 99px;
+    }
+    
+    .btn-mini-ver {
+      padding: 5px 9px; background: var(--azul); color: white; border: none;
+      border-radius: 6px; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; margin-right: 4px;
+    }
+    .btn-mini-ver:hover { background: #1f618d; }
+
+    .btn-mini-pdf {
+      padding: 5px 9px; background: var(--laranja); color: #1c2b1e; border: none;
+      border-radius: 6px; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; margin-right: 4px;
+    }
+    .btn-mini-pdf:hover { opacity: 0.85; }
+    
+    .btn-deletar {
+      padding: 5px 9px; background: var(--erro); color: white; border: none;
+      border-radius: 6px; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer;
+    }
+    .btn-deletar:hover { background: #962d22; }
+
+    /* ---- MODAL DE VISUALIZAÇÃO ---- */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+    }
+    .modal-content {
+      background: white; border-radius: var(--radius); max-width: 600px; width: 100%;
+      max-height: 85vh; overflow-y: auto; padding: 24px; box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 2px solid var(--verde-cl); padding-bottom: 10px; margin-bottom: 16px;
+    }
+    .modal-header h3 { font-family: 'Fraunces', serif; color: var(--verde); }
+    .close-modal { font-size: 1.5rem; cursor: pointer; color: #777; font-weight: bold; }
+    .close-modal:hover { color: var(--erro); }
+    .info-group { margin-bottom: 16px; }
+    .info-group h4 { font-size: 0.85rem; color: var(--verde); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; border-left: 3px solid var(--laranja); padding-left: 6px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; }
+    .info-item { background: #f8faf8; padding: 8px 12px; border-radius: 6px; border: 1px solid #eef2ee; }
+    .info-item span { display: block; font-size: 0.72rem; font-weight: 800; color: #778877; text-transform: uppercase; }
+    .info-full { grid-column: span 2; }
+
+    .loading { text-align: center; padding: 40px; color: #8a988a; font-size: 1.1rem; }
+    .empty   { text-align: center; padding: 30px; color: #8a988a; }
+
+    @media(max-width:640px){
+      .stats { grid-template-columns: 1fr 1fr; }
+      table { font-size: 0.75rem; }
+      .info-grid { grid-template-columns: 1fr; }
+      .info-full { grid-column: span 1; }
+      td:last-child { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="tela-bloqueio">
+  <div class="card-bloqueio">
+    <span style="font-size: 3rem; display:block; margin-bottom: 10px;">🔒</span>
+    <h2 style="font-family:'Fraunces', serif; color: var(--verde); margin-bottom: 8px;">Painel Restrito</h2>
+    <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">Por favor, insira a senha de acesso da cidade para visualizar as inscrições.</p>
+    <button class="btn-senha" onclick="solicitarSenha()">Digitar Senha</button>
+  </div>
+</div>
+
+<div id="conteudo-painel">
+  <header>
+    <span style="font-size:2rem">🐾</span>
+    <h1>Painel da Cidade</h1>
+    <p>Abrigo Pitukinha – Castração Gratuita</p>
+    <span class="badge" id="badge-cidade"></span>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="stats">
+        <div class="stat">
+          <div class="num" id="stat-total">–</div>
+          <div class="leg">Inscritos</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="stat-vagas">–</div>
+          <div class="leg">Vagas restantes</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="stat-data">–</div>
+          <div class="leg">Data do evento</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">⬇️ Downloads Gabinete</div>
+      <div class="acoes">
+        <button class="btn btn-todos" onclick="baixarTodosPDF()">🗂️ Baixar TODAS as Fichas (PDF)</button>
+        <button class="btn btn-csv"   onclick="exportarCSV()">📊 Exportar Lista (Excel/CSV)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">📋 Lista de Inscritos Realizados</div>
+      <input class="busca" type="text" id="busca" placeholder="🔍 Buscar por nome do animal ou tutor..." oninput="filtrarTabela()">
+      <div id="tabela-wrap">
+        <div class="loading">🐾 Carregando inscrições...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="viewModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="m-titulo">Ficha do Animal</h3>
+      <span class="close-modal" onclick="fecharModal()">&times;</span>
+    </div>
+    
+    <div class="info-group">
+      <h4>Dados do Paciente</h4>
+      <div class="info-grid">
+        <div class="info-item"><span>Nome do Animal</span><strong id="m-nome-animal"></strong></div>
+        <div class="info-item"><span>Espécie</span><strong id="m-especie"></strong></div>
+        <div class="info-item"><span>Sexo</span><strong id="m-sexo"></strong></div>
+        <div class="info-item"><span>Raça</span><strong id="m-raca"></strong></div>
+        <div class="info-item"><span>Cor</span><strong id="m-cor"></strong></div>
+        <div class="info-item"><span>Idade Est.</span><strong id="m-idade"></strong></div>
+        <div class="info-item"><span>Peso</span><strong id="m-peso"></strong></div>
+        <div class="info-item"><span>Vacinado?</span><strong id="m-vacinado"></strong></div>
+        <div class="info-item"><span>Vermifugado?</span><strong id="m-vermifugado"></strong></div>
+        <div class="info-item info-full"><span>Histórico de Doenças / Cirurgia</span><strong id="m-doente"></strong></div>
+        <div class="info-item info-full"><span>Usa Medicamentos?</span><strong id="m-medicamento"></strong></div>
+      </div>
+    </div>
+
+    <div class="info-group" style="margin-top:20px;">
+      <h4>Dados do Responsável</h4>
+      <div class="info-grid">
+        <div class="info-item info-full"><span>Nome do Tutor</span><strong id="m-nome-tutor"></strong></div>
+        <div class="info-item"><span>Data Nasc.</span><strong id="m-data-nasc"></strong></div>
+        <div class="info-item"><span>RG</span><strong id="m-rg"></strong></div>
+        <div class="info-item"><span>CPF</span><strong id="m-cpf"></strong></div>
+        <div class="info-item"><span>Telefone / WhatsApp</span><strong id="m-fone"></strong></div>
+        <div class="info-item info-full"><span>E-mail</span><strong id="m-email"></strong></div>
+        <div class="info-item info-full"><span>Endereço Completo</span><strong id="m-endereco"></strong></div>
+        <div class="info-item"><span>Bairro</span><strong id="m-bairro"></strong></div>
+        <div class="info-item"><span>CEP</span><strong id="m-cep"></strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const up = s => (s || '').toUpperCase();
+
+const sb = {
+  url: CONFIG.supabaseUrl,
+  key: CONFIG.supabaseKey,
+  async req(path, opts = {}) {
+    const r = await fetch(`${this.url}/rest/v1/${path}`, {
+      headers: {
+        'apikey': this.key,
+        'Authorization': `Bearer ${this.key}`,
+        'Content-Type': 'application/json',
+        ...(opts.headers || {})
+      },
+      method: opts.method || 'GET',
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.headers.get('content-type')?.includes('json') ? r.json() : r.text();
+  }
+};
+
+let inscricoes = [];
+let filtradas  = [];
+
+// ─── LÓGICA DE CONTROLE DE ACESSO POR SENHA ──────────────────────────────────
+function solicitarSenha() {
+  const entrada = prompt("Digite a senha de segurança do painel:");
+  if (entrada === CONFIG.senhaPainel) {
+    document.getElementById('tela-bloqueio').style.display = 'none';
+    document.getElementById('conteudo-painel').style.display = 'block';
+    
+    // Configura os dados textuais e dispara a busca no Supabase
+    document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
+    document.getElementById('stat-data').textContent = CONFIG.dataEvento;
+    carregar();
+  } else if (entrada !== null) {
+    alert("Senha incorreta! Acesso negado.");
+  }
+}
+
+// Dispara a caixa de senha assim que a página abre
+window.onload = function() {
+  solicitarSenha();
+};
+
+async function carregar() {
+  try {
+    const res = await sb.req(`inscricoes?cidade=eq.${CONFIG.cidade}&order=id.asc`);
+    inscricoes = Array.isArray(res) ? res : [];
+    filtradas = [...inscricoes];
+    atualizarStats();
+    renderTabela();
+  } catch(e) {
+    document.getElementById('tabela-wrap').innerHTML =
+      `<div class="empty">❌ Erro ao carregar: ${e.message}</div>`;
+  }
+}
+
+function atualizarStats() {
+  const total = inscricoes.length;
+  document.getElementById('stat-total').textContent  = total;
+  document.getElementById('stat-vagas').textContent  = Math.max(0, 300 - total);
+}
+
+function renderTabela() {
+  if (!filtradas.length) {
+    document.getElementById('tabela-wrap').innerHTML =
+      '<div class="empty">Nenhuma inscrição encontrada.</div>';
+    return;
+  }
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Animal</th>
+          <th>Espécie / Sexo</th>
+          <th>Tutor</th>
+          <th>Fone</th>
+          <th style="text-align:right">Ações</th>
+        </tr>
+      </thead>
+      <tbody>`;
+  filtradas.forEach((ins, i) => {
+    const nomeLimpo = (ins.nome_animal || '').replace(/'/g, "\\x27").replace(/"/g, "\\x22");
+    html += `
+      <tr>
+        <td><span class="num-tag">#${String(i + 1).padStart(3,'0')}</span></td>
+        <td><strong>${ins.nome_animal || '–'}</strong></td>
+        <td>${ins.especie || ''} · ${ins.sexo || ''}</td>
+        <td>${ins.nome_tutor || '–'}</td>
+        <td>${ins.fone || '–'}</td>
+        <td>
+          <button class="btn-mini-ver" onclick="visualizarInscricao(${ins.id})">👁️ Ver</button>
+          <button class="btn-mini-pdf" onclick="baixarUmPDF(${ins.id})">⬇️ PDF</button>
+          <button class="btn-deletar" onclick="excluirInscricao(${ins.id}, '${nomeLimpo}')">❌ Excluir</button>
+        </td>
+      </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('tabela-wrap').innerHTML = html;
+}
+
+function filtrarTabela() {
+  const q = document.getElementById('busca').value.toLowerCase();
+  filtradas = inscricoes.filter(i =>
+    (i.nome_animal || '').toLowerCase().includes(q) ||
+    (i.nome_tutor  || '').toLowerCase().includes(q)
+  );
+  renderTabela();
+}
+
+function visualizarInscricao(id) {
+  const ins = inscricoes.find(i => i.id === id);
+  if (!ins) return;
+
+  document.getElementById('m-titulo').textContent = `Ficha de Inscrição – ${up(ins.nome_animal)}`;
+  document.getElementById('m-nome-animal').textContent = up(ins.nome_animal);
+  document.getElementById('m-especie').textContent = up(ins.especie);
+  document.getElementById('m-sexo').textContent = up(ins.sexo);
+  document.getElementById('m-raca').textContent = up(ins.raca);
+  document.getElementById('m-cor').textContent = up(ins.cor);
+  document.getElementById('m-idade').textContent = up(ins.idade);
+  document.getElementById('m-peso').textContent = `${up(ins.peso)} KG`;
+  document.getElementById('m-vacinado').textContent = up(ins.vacinado);
+  document.getElementById('m-vermifugado').textContent = up(ins.vermifugado);
+  document.getElementById('m-doente').textContent = up(ins.doente);
+  document.getElementById('m-medicamento').textContent = up(ins.medicamento);
+  
+  document.getElementById('m-nome-tutor').textContent = up(ins.nome_tutor);
+  document.getElementById('m-data-nasc').textContent = ins.data_nascimento || '–';
+  document.getElementById('m-rg').textContent = up(ins.rg);
+  document.getElementById('m-cpf').textContent = ins.cpf || '–';
+  document.getElementById('m-fone').textContent = ins.fone || '–';
+  document.getElementById('m-email').textContent = (ins.email || '–').toUpperCase();
+  document.getElementById('m-endereco').textContent = up(ins.endereco);
+  document.getElementById('m-bairro').textContent = up(ins.bairro);
+  document.getElementById('m-cep').textContent = ins.cep || '–';
+
+  document.getElementById('viewModal').style.display = 'flex';
+}
+
+function fecharModal() {
+  document.getElementById('viewModal').style.display = 'none';
+}
+
+window.onclick = function(e) {
+  const modal = document.getElementById('viewModal');
+  if (e.target == modal) fecharModal();
+}
+
+function baixarUmPDF(id) {
+  const ins = inscricoes.find(i => i.id === id);
+  if (ins) gerarFichaAlinhada(ins);
+}
+
+async function baixarTodosPDF() {
+  if (!inscricoes.length) { alert('Nenhuma inscrição para baixar.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  inscricoes.forEach((d, idx) => {
+    if (idx > 0) doc.addPage();
+    adicionarFichaAoDoc(doc, d);
+  });
+  doc.save(`Fichas_Completas_${CONFIG.cidade}.pdf`);
+}
+
+function exportarCSV() {
+  if (!inscricoes.length) { alert('Nenhuma inscrição para exportar.'); return; }
+  const cabecalho = ['Nº','Animal','Espécie','Sexo','Raça','Cor','Idade','Peso','Vacinado','Vermifugado','Doente','Medicamento','Tutor','Data Nasc','RG','CPF','Email','Fone','Endereço','Bairro','CEP'];
+  const linhas = inscricoes.map((i, idx) => [
+    String(idx + 1).padStart(3,'0'),
+    i.nome_animal, i.especie, i.sexo, i.raca, i.cor, i.idade, i.peso, i.vacinado, i.vermifugado, i.doente, i.medicamento,
+    i.nome_tutor, i.data_nascimento, i.rg, i.cpf, i.email, i.fone, i.endereco, i.bairro, i.cep
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+
+  const csv = [cabecalho, ...linhas].map(r => r.join(',')).join('\n');
+  const blob = new Blob(['\ufeff'+csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Lista_Presenca_${CONFIG.cidade}.csv`;
+  a.click();
+}
+
+async function excluirInscricao(id, nomeAnimal) {
+  if (!confirm(`Tem certeza absoluta que deseja excluir a inscrição do animal "${nomeAnimal}"?`)) return;
+  try {
+    await sb.req(`inscricoes?id=eq.${id}`, { method: 'DELETE' });
+    alert('Inscrição removida com sucesso!');
+    carregar(); 
+  } catch(e) {
+    alert('Erro ao excluir do banco de dados: ' + e.message);
+  }
+}
+
+function adicionarFichaAoDoc(doc, d) {
+  doc.setFont("helvetica", "bold");
+  
+  doc.rect(10, 10, 190, 12, 'S');
+  doc.setFontSize(12);
+  doc.text("CASTRAÇÃO E IDENTIFICAÇÃO POR MICROCHIP PARA CÃES E GATOS", 105, 18, { align: "center" });
+  doc.setFontSize(14);
+  doc.text("FICHA DE INSCRIÇÃO", 105, 35, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.text("DADOS DO ANIMAL", 10, 45);
+  doc.rect(10, 47, 190, 39);
+  doc.line(10, 57, 200, 57); doc.line(10, 67, 200, 67); doc.line(10, 77, 200, 77); 
+  doc.line(73, 47, 73, 77); doc.line(136, 47, 136, 77);
+
+  doc.text(`ESPÉCIE: ${up(d.especie)}`, 12, 53);
+  doc.text(`NOME: ${up(d.nome_animal)}`, 75, 53);
+  doc.text(`SEXO: ${up(d.sexo)}`, 138, 53);
+  doc.text(`RAÇA: ${up(d.raca)}`, 12, 63);
+  doc.text(`COR: ${up(d.cor)}`, 75, 63);
+  doc.text(`IDADE: ${up(d.idade)}`, 138, 63);
+  doc.text(`PESO: ${up(d.peso)} KG`, 12, 73);
+  doc.text(`VACINADO: ${up(d.vacinado)}`, 75, 73);
+  doc.text(`VERMIFUGADO: ${up(d.vermifugado)}`, 138, 73);
+
+  doc.setFontSize(8);
+  doc.text(`ESTEVE DOENTE NOS ÚLTIMOS 6 MESES OU REALIZOU CIRURGIA?  ${up(d.doente)}`, 12, 81);
+  doc.text(`TOMA MEDICAMENTO? QUAIS?  ${up(d.medicamento)}`, 12, 85);
+
+  doc.setFontSize(10);
+  doc.text("DADOS DO RESPONSÁVEL", 10, 96);
+  doc.rect(10, 98, 190, 49); 
+  doc.line(10, 108, 200, 108); doc.line(10, 118, 200, 118); doc.line(10, 128, 200, 128); doc.line(10, 137, 200, 137);
+  doc.line(73, 108, 73, 118); doc.line(136, 108, 136, 118); doc.line(105, 118, 105, 128); doc.line(105, 137, 105, 147);
+
+  doc.setFontSize(9);
+  doc.text(`NOME: ${up(d.nome_tutor)}`, 12, 104);
+  doc.text(`DATA NASC.: ${d.data_nascimento || '–'}`, 12, 114);
+  doc.text(`RG: ${up(d.rg)}`, 75, 114);
+  doc.text(`CPF: ${d.cpf || '–'}`, 138, 114);
+  doc.text(`E-MAIL: ${up(d.email)}`, 12, 124);
+  doc.text(`FONE: ${d.fone || '–'}`, 107, 124);
+  doc.text(`ENDEREÇO: ${up(d.endereco)}`, 12, 133);
+  doc.text(`BAIRRO: ${up(d.bairro)}`, 12, 143); 
+  doc.text(`CEP: ${d.cep || '–'}`, 107, 143);       
+
+  doc.setFontSize(11);
+  doc.text("TERMO DE AUTORIZAÇÃO ANESTÉSICO, CIRÚRGICO E MICROCHIPAGEM", 105, 162, { align: "center" });
+  doc.setFontSize(8.5); doc.setFont("helvetica", "italic");
+  doc.text("Autorizo a realização dos procedimentos anestésico cirúrgico e microchipagem necessários no animal supracitado, a ser realizado pelo Médico Veterinário Leandro Lucatelli Bueno, CRMV 24.549-SP.", 10, 169, {maxWidth: 185});
+  doc.text("Declaro ter sido esclarecido acerca dos possíveis riscos inerentes ao(s) procedimento(s) proposto(s), estando o referido profissional isento de quaisquer responsabilidades decorrentes de tais riscos.", 10, 179, {maxWidth: 185});
+
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMO DE AUTORIZAÇÃO USO DE DADOS E IMAGENS", 105, 194, { align: "center" });
+  doc.setFont("helvetica", "italic");
+  doc.text("Autorizo a coleta, o registro e a utilização de minhas imagens e dos meus dados pessoais para fins de prestação de contas e contatos, de acordo com a Lei Geral de Proteção de Dados.", 10, 201, {maxWidth: 185});
+
+  doc.setFont("helvetica", "normal");
+  doc.text(`Cidade: __________________________    Data: ____ / ____ / 202____`, 30, 225);
+  doc.line(40, 250, 170, 250);
+  doc.text("ASSINATURA:", 12, 250); doc.text("NOME COMPLETO:", 12, 260);
+  doc.setFont("helvetica", "bold"); doc.text(up(d.nome_tutor), 45, 260);
+}
+
+function gerarFichaAlinhada(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  adicionarFichaAoDoc(doc, d);
+  doc.save(`Ficha_${up(d.nome_animal)}.pdf`);
+}
+</script>
+</body>
+</html>
