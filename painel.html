@@ -12,7 +12,7 @@
       supabaseUrl: "https://nwmajgtiyxejeuwhkhbk.supabase.co",
       supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8",
       cidade:      "Itatiba",
-      dataEvento:  "25/06/2025",
+      dataEvento:  "25/06/2026",
       senhaPainel: "pitukinha123"  // <-- DEFINA A SENHA DO PAINEL AQUI!
     };
   </script>
@@ -452,61 +452,70 @@ async function excluirInscricao(id, nomeAnimal) {
 }
 
 function adicionarFichaAoDoc(doc, d) {
+  const up = s => (s || '').toUpperCase();
   doc.setFont("helvetica", "bold");
   
-  doc.rect(10, 10, 190, 12, 'S');
-  doc.setFontSize(12);
-  doc.text("CASTRAÇÃO E IDENTIFICAÇÃO POR MICROCHIP PARA CÃES E GATOS", 105, 18, { align: "center" });
-  doc.setFontSize(14);
-  doc.text("FICHA DE INSCRIÇÃO", 105, 35, { align: "center" });
+  // QUADRO DO CABEÇALHO UNIFICADO e INTEGRADO
+  doc.rect(10, 10, 190, 16, 'S'); // Aumentado um pouco a altura do quadro para o novo título
+  doc.setFontSize(13);
+  doc.text("PRONTUÁRIO: CASTRAÇÃO E MICROCHIPAGEM PARA CÃES E GATOS", 105, 20, { align: "center" });
 
+  // O texto antigo "FICHA DE INSCRIÇÃO" foi removido.
+  // Os Dados do Animal foram puxados ligeiramente para cima para otimizar espaço.
   doc.setFontSize(10);
-  doc.text("DADOS DO ANIMAL", 10, 45);
-  doc.rect(10, 47, 190, 39);
-  doc.line(10, 57, 200, 57); doc.line(10, 67, 200, 67); doc.line(10, 77, 200, 77); 
-  doc.line(73, 47, 73, 77); doc.line(136, 47, 136, 77);
+  doc.text("DADOS DO ANIMAL", 10, 40);
+  doc.rect(10, 42, 190, 39);
+  doc.line(10, 52, 200, 52); doc.line(10, 62, 200, 62); doc.line(10, 72, 200, 72); 
+  doc.line(73, 42, 73, 72); doc.line(136, 42, 136, 72);
 
-  doc.text(`ESPÉCIE: ${up(d.especie)}`, 12, 53);
-  doc.text(`NOME: ${up(d.nome_animal)}`, 75, 53);
-  doc.text(`SEXO: ${up(d.sexo)}`, 138, 53);
-  doc.text(`RAÇA: ${up(d.raca)}`, 12, 63);
-  doc.text(`COR: ${up(d.cor)}`, 75, 63);
-  doc.text(`IDADE: ${up(d.idade)}`, 138, 63);
-  doc.text(`PESO: ${up(d.peso)} KG`, 12, 73);
-  doc.text(`VACINADO: ${up(d.vacinado)}`, 75, 73);
-  doc.text(`VERMIFUGADO: ${up(d.vermifugado)}`, 138, 73);
+  doc.text(`ESPÉCIE: ${up(d.especie)}`, 12, 48);
+  doc.text(`NOME: ${up(d.nome_animal)}`, 75, 48);
+  doc.text(`SEXO: ${up(d.sexo)}`, 138, 48);
+  doc.text(`RAÇA: ${up(d.raca)}`, 12, 58);
+  doc.text(`COR: ${up(d.cor)}`, 75, 58);
+  doc.text(`IDADE: ${up(d.idade)}`, 138, 58);
+  doc.text(`PESO: ${up(d.peso)} KG`, 12, 68);
+  doc.text(`VACINADO: ${up(d.vacinado)}`, 75, 68);
+  doc.text(`VERMIFUGADO: ${up(d.vermifugado)}`, 138, 68);
 
   doc.setFontSize(8);
-  doc.text(`ESTEVE DOENTE NOS ÚLTIMOS 6 MESES OU REALIZOU CIRURGIA?  ${up(d.doente)}`, 12, 81);
-  doc.text(`TOMA MEDICAMENTO? QUAIS?  ${up(d.medicamento)}`, 12, 85);
+  doc.text(`ESTEVE DOENTE NOS ÚLTIMOS 6 MESES OU REALIZOU CIRURGIA?  ${up(d.doente)}`, 12, 76);
+  doc.text(`TOMA MEDICAMENTO? QUAIS?  ${up(d.medicamento)}`, 12, 80);
 
   doc.setFontSize(10);
-  doc.text("DADOS DO RESPONSÁVEL", 10, 96);
-  doc.rect(10, 98, 190, 49); 
-  doc.line(10, 108, 200, 108); doc.line(10, 118, 200, 118); doc.line(10, 128, 200, 128); doc.line(10, 137, 200, 137);
-  doc.line(73, 108, 73, 118); doc.line(136, 108, 136, 118); doc.line(105, 118, 105, 128); doc.line(105, 137, 105, 147);
+  doc.text("DADOS DO RESPONSÁVEL", 10, 91);
+  doc.rect(10, 93, 190, 49); 
+  doc.line(10, 103, 200, 103); doc.line(10, 113, 200, 113); doc.line(10, 123, 200, 123); doc.line(10, 132, 200, 132);
+  doc.line(73, 103, 73, 113); doc.line(136, 103, 136, 113); doc.line(105, 113, 105, 123); doc.line(105, 132, 105, 142);
 
   doc.setFontSize(9);
-  doc.text(`NOME: ${up(d.nome_tutor)}`, 12, 104);
-  doc.text(`DATA NASC.: ${d.data_nascimento || '–'}`, 12, 114);
-  doc.text(`RG: ${up(d.rg)}`, 75, 114);
-  doc.text(`CPF: ${d.cpf || '–'}`, 138, 114);
-  doc.text(`E-MAIL: ${up(d.email)}`, 12, 124);
-  doc.text(`FONE: ${d.fone || '–'}`, 107, 124);
-  doc.text(`ENDEREÇO: ${up(d.endereco)}`, 12, 133);
-  doc.text(`BAIRRO: ${up(d.bairro)}`, 12, 143); 
-  doc.text(`CEP: ${d.cep || '–'}`, 107, 143);       
+  doc.text(`NOME: ${up(d.nome_tutor)}`, 12, 99);
+  doc.text(`DATA NASC.: ${d.data_nascimento || '–'}`, 12, 109);
+  doc.text(`RG: ${up(d.rg)}`, 75, 109);
+  doc.text(`CPF: ${d.cpf || '–'}`, 138, 109);
+  doc.text(`E-MAIL: ${up(d.email)}`, 12, 119);
+  doc.text(`FONE: ${d.fone || '–'}`, 107, 119);
+  doc.text(`ENDEREÇO: ${up(d.endereco)}`, 12, 128);
+  doc.text(`BAIRRO: ${up(d.bairro)}`, 12, 138); 
+  doc.text(`CEP: ${d.cep || '–'}`, 107, 138);       
 
+// ─── TERMO ANESTÉSICO ATUALIZADO ───
   doc.setFontSize(11);
-  doc.text("TERMO DE AUTORIZAÇÃO ANESTÉSICO, CIRÚRGICO E MICROCHIPAGEM", 105, 162, { align: "center" });
-  doc.setFontSize(8.5); doc.setFont("helvetica", "italic");
-  doc.text("Autorizo a realização dos procedimentos anestésico cirúrgico e microchipagem necessários no animal supracitado, a ser realizado pelo Médico Veterinário Leandro Lucatelli Bueno, CRMV 24.549-SP.", 10, 169, {maxWidth: 185});
-  doc.text("Declaro ter sido esclarecido acerca dos possíveis riscos inerentes ao(s) procedimento(s) proposto(s), estando o referido profissional isento de quaisquer responsabilidades decorrentes de tais riscos.", 10, 179, {maxWidth: 185});
-
   doc.setFont("helvetica", "bold");
-  doc.text("TERMO DE AUTORIZAÇÃO USO DE DADOS E IMAGENS", 105, 194, { align: "center" });
+  doc.text("TERMO DE AUTORIZAÇÃO ANESTÉSICO, CIRÚRGICO E MICROCHIPAGEM", 105, 160, { align: "center" });
+  
+  doc.setFontSize(8.5); 
   doc.setFont("helvetica", "italic");
-  doc.text("Autorizo a coleta, o registro e a utilização de minhas imagens e dos meus dados pessoais para fins de prestação de contas e contatos, de acordo com a Lei Geral de Proteção de Dados.", 10, 201, {maxWidth: 185});
+  doc.text("Autorizo a realização dos procedimentos anestésicos, de castração e microchipagem no animal identificado a ser realizado.", 10, 166, {maxWidth: 185});
+  doc.text("Confirmo que após a saída do animal da Unidade Móvel, na qualidade de responsável, tomarei todos os cuidados necessários, observando o paciente e imediatamente comunicando ao médico veterinário quaisquer complicações ou acidentes que venham a ocorrer.", 10, 172, {maxWidth: 185});
+  doc.text("Declaro estar ciente que é minha responsabilidade realizar os exames pré-operatórios e que a não realização desses exames podem interferir no sucesso do procedimento.", 10, 182, {maxWidth: 185});
+  doc.text("Declaro ter sido esclarecido acerca dos possíveis riscos inerentes aos procedimentos propostos, isento de quaisquer responsabilidades decorrentes de tais riscos.", 10, 189, {maxWidth: 185});
+
+  // ─── TERMO DE USO DE IMAGEM (Empurrado um pouco para baixo para dar espaço) ───
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMO DE AUTORIZAÇÃO USO DE DADOS E IMAGENS", 105, 202, { align: "center" });
+  doc.setFont("helvetica", "italic");
+  doc.text("Autorizo a coleta, o registro e a utilização de minhas imagens e dos meus dados pessoais para fins de prestação de contas e contatos, de acordo com a Lei Geral de Proteção de Dados.", 10, 208, {maxWidth: 185});
 
   doc.setFont("helvetica", "normal");
   doc.text(`Cidade: __________________________    Data: ____ / ____ / 202____`, 30, 225);
