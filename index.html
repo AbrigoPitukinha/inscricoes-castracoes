@@ -3,18 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscrição – Castração Gratuita | Abrigo Pitukinha</title>
+  <title>Inscrição – Mutirão de Castração</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
 
   <script>
-    const CONFIG = {
-      supabaseUrl:    "https://nwmajgtiyxejeuwhkhbk.supabase.co",
-      supabaseKey:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8",
-      cidade:         "Itatiba",
-      dataEvento:     "25/06/2025",
-      limiteVagas:    300,
+    const SUPABASE_URL = "https://nwmajgtiyxejeuwhkhbk.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8";
+
+    // 🐾 LISTA COMPLETA DE CIDADES 🐾
+    const EVENTOS = {
+      "miguelopolis-18.06": { cidade: "Miguelópolis", dataEvento: "18/06/2026", limiteVagas: 300, senhaPainel: "castramig1806" },
+      "taquaritinga-19.06": { cidade: "Taquaritinga", dataEvento: "19/06/2026", limiteVagas: 300, senhaPainel: "castrataq1906" },
+      "araraquara-20.06": { cidade: "Araraquara", dataEvento: "20/06/2026", limiteVagas: 300, senhaPainel: "castraara2006" },
+      "sao-carlos-21.06": { cidade: "São Carlos", dataEvento: "21/06/2026", limiteVagas: 300, senhaPainel: "castrasao2106" },
+      "sao-paulo-24.06": { cidade: "São Paulo", dataEvento: "24/06/2026", limiteVagas: 300, senhaPainel: "castrasao2406" },
+      "itatiba-25.06": { cidade: "Itatiba", dataEvento: "25/06/2026", limiteVagas: 300, senhaPainel: "castraita2506" },
+      "florida-paulista-27.06": { cidade: "Flórida Paulista", dataEvento: "27/06/2026", limiteVagas: 300, senhaPainel: "castraflo2706" },
+      "adamantina-28.06": { cidade: "Adamantina", dataEvento: "28/06/2026", limiteVagas: 300, senhaPainel: "castraada2806" },
+      "jau-01.07": { cidade: "Jaú", dataEvento: "01/07/2026", limiteVagas: 300, senhaPainel: "castrajau0107" },
+      "lencois-paulista-02.07": { cidade: "Lençóis Paulista", dataEvento: "02/07/2026", limiteVagas: 300, senhaPainel: "castralen0207" },
+      "sao-manuel-03.07": { cidade: "São Manuel", dataEvento: "03/07/2026", limiteVagas: 300, senhaPainel: "castrasao0307" },
+      "elias-fausto-04.07": { cidade: "Elias Fausto", dataEvento: "04/07/2026", limiteVagas: 300, senhaPainel: "castraeli0407" },
+      "indaiatuba-05.07": { cidade: "Indaiatuba", dataEvento: "05/07/2026", limiteVagas: 300, senhaPainel: "castraind0507" },
+      "franca-10.07": { cidade: "Franca", dataEvento: "10/07/2026", limiteVagas: 300, senhaPainel: "castrafra1007" },
+      "ribeirao-preto-11.07": { cidade: "Ribeirão Preto", dataEvento: "11/07/2026", limiteVagas: 300, senhaPainel: "castrarib1107" },
+      "ribeirao-preto-12.07": { cidade: "Ribeirão Preto", dataEvento: "12/07/2026", limiteVagas: 300, senhaPainel: "castrarib1207" },
+      "jacupiranga-17.07": { cidade: "Jacupiranga", dataEvento: "17/07/2026", limiteVagas: 300, senhaPainel: "castrajac1707" },
+      "barra-do-turvo-18.07": { cidade: "Barra do Turvo", dataEvento: "18/07/2026", limiteVagas: 300, senhaPainel: "castrabar1807" },
+      "valinhos-19.07": { cidade: "Valinhos", dataEvento: "19/07/2026", limiteVagas: 300, senhaPainel: "castraval1907" },
+      "jales-24.07": { cidade: "Jales", dataEvento: "24/07/2026", limiteVagas: 300, senhaPainel: "castrajal2407" },
+      "fernandopolis-25.07": { cidade: "Fernandópolis", dataEvento: "25/07/2026", limiteVagas: 300, senhaPainel: "castrafer2507" },
+      "votuporanga-26.07": { cidade: "Votuporanga", dataEvento: "26/07/2026", limiteVagas: 300, senhaPainel: "castravot2607" },
+      "sao-paulo-25.09": { cidade: "São Paulo", dataEvento: "25/09/2026", limiteVagas: 300, senhaPainel: "castrasao2509" },
+      "sao-paulo-26.09": { cidade: "São Paulo", dataEvento: "26/09/2026", limiteVagas: 300, senhaPainel: "castrasao2609" },
+      "sao-paulo-mrsc-27.09": { cidade: "São Paulo MRSC", dataEvento: "27/09/2026", limiteVagas: 300, senhaPainel: "castrasao2709" }
     };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventoId = urlParams.get('evento');
+    const CONFIG = EVENTOS[eventoId]; 
   </script>
+
   <style>
     :root {
       --verde:     #1a7a4a;
@@ -27,167 +56,38 @@
       --radius:    12px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--cinza);
-      color: var(--texto);
-      min-height: 100vh;
-    }
+    body { font-family: 'Nunito', sans-serif; background: var(--cinza); color: var(--texto); min-height: 100vh; }
 
-    /* ---- HEADER ---- */
-    header {
-      background: var(--verde);
-      color: white;
-      padding: 28px 20px 24px;
-      text-align: center;
-    }
+    header { background: var(--verde); color: white; padding: 28px 20px 24px; text-align: center; }
     .pata { font-size: 2.4rem; display: block; margin-bottom: 6px; }
-    header h1 {
-      font-family: 'Fraunces', serif;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      font-weight: 700;
-      line-height: 1.2;
-    }
-    header p {
-      margin-top: 6px;
-      font-size: 0.95rem;
-      opacity: 0.88;
-    }
-    .badge-cidade {
-      display: inline-block;
-      margin-top: 12px;
-      background: var(--laranja);
-      color: #1c2b1e;
-      font-weight: 800;
-      font-size: 0.9rem;
-      padding: 5px 18px;
-      border-radius: 99px;
-      letter-spacing: 0.04em;
-    }
+    header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 700; line-height: 1.2; }
+    header p { margin-top: 6px; font-size: 0.95rem; opacity: 0.88; }
+    .badge-cidade { display: inline-block; margin-top: 12px; background: var(--laranja); color: #1c2b1e; font-weight: 800; font-size: 0.9rem; padding: 5px 18px; border-radius: 99px; letter-spacing: 0.04em; }
 
-    /* ---- FORM ---- */
-    .card {
-      background: white;
-      max-width: 680px;
-      margin: 24px auto;
-      padding: 28px 24px;
-      border-radius: var(--radius);
-      box-shadow: 0 2px 18px rgba(26,122,74,0.08);
-    }
-    .section-title {
-      font-family: 'Fraunces', serif;
-      font-size: 1.1rem;
-      color: var(--verde);
-      border-bottom: 2px solid var(--verde-cl);
-      padding-bottom: 8px;
-      margin: 24px 0 16px;
-    }
+    .card { background: white; max-width: 680px; margin: 24px auto; padding: 28px 24px; border-radius: var(--radius); box-shadow: 0 2px 18px rgba(26,122,74,0.08); }
+    .section-title { font-family: 'Fraunces', serif; font-size: 1.1rem; color: var(--verde); border-bottom: 2px solid var(--verde-cl); padding-bottom: 8px; margin: 24px 0 16px; }
     .section-title:first-child { margin-top: 0; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .full { grid-column: span 2; }
-    .field label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      color: #556055;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-    }
-    .field input,
-    .field select {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1.5px solid var(--borda);
-      border-radius: 8px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 1rem;
-      color: var(--texto);
-      transition: border-color 0.2s;
-      appearance: none;
-      background: white;
-    }
-    .field select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231a7a4a' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
-    }
-    .field input:focus,
-    .field select:focus {
-      outline: none;
-      border-color: var(--verde);
-      box-shadow: 0 0 0 3px rgba(26,122,74,0.12);
-    }
-    .field input.erro,
-    .field select.erro { border-color: var(--erro); }
+    .field label { display: block; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.03em; color: #556055; margin-bottom: 5px; text-transform: uppercase; }
+    .field input, .field select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--borda); border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 1rem; color: var(--texto); transition: border-color 0.2s; background: white; }
+    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231a7a4a' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(26,122,74,0.12); }
+    .field input.erro, .field select.erro { border-color: var(--erro); }
 
-    /* ---- BOTÃO ---- */
-    .btn-submit {
-      width: 100%;
-      padding: 16px;
-      background: var(--verde);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      font-family: 'Nunito', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      margin-top: 28px;
-      transition: background 0.2s, transform 0.1s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
+    .btn-submit { width: 100%; padding: 16px; background: var(--verde); color: white; border: none; border-radius: var(--radius); font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 900; letter-spacing: 0.04em; cursor: pointer; margin-top: 28px; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px; }
     .btn-submit:hover { background: #155f39; }
     .btn-submit:active { transform: scale(0.98); }
     .btn-submit:disabled { background: #8ab89a; cursor: not-allowed; }
 
-    /* ---- ESTADOS ---- */
-    #msg-esgotado, #msg-sucesso, #msg-erro {
-      display: none;
-      max-width: 680px;
-      margin: 30px auto;
-      padding: 34px 24px;
-      border-radius: var(--radius);
-      text-align: center;
-    }
-    #msg-esgotado {
-      background: #fff3e0;
-      border: 2px solid #e67e22;
-      color: #7f4e00;
-    }
-    #msg-sucesso {
-      background: var(--verde-cl);
-      border: 2px solid var(--verde);
-      color: var(--verde);
-    }
-    #msg-sucesso h2 {
-      font-family: 'Fraunces', serif;
-      font-size: 1.6rem;
-      margin-bottom: 14px;
-    }
-    #msg-sucesso p {
-      font-size: 1.05rem;
-      line-height: 1.5;
-      font-weight: 600;
-      max-width: 560px;
-      margin: 0 auto;
-    }
-    #msg-erro {
-      background: #fdecea;
-      border: 2px solid var(--erro);
-      color: var(--erro);
-    }
+    #msg-esgotado, #msg-sucesso, #msg-erro, #msg-link-invalido { display: none; max-width: 680px; margin: 30px auto; padding: 34px 24px; border-radius: var(--radius); text-align: center; }
+    #msg-esgotado { background: #fff3e0; border: 2px solid #e67e22; color: #7f4e00; }
+    #msg-sucesso { background: var(--verde-cl); border: 2px solid var(--verde); color: var(--verde); }
+    #msg-sucesso h2 { font-family: 'Fraunces', serif; font-size: 1.6rem; margin-bottom: 14px; }
+    #msg-sucesso p { font-size: 1.05rem; line-height: 1.5; font-weight: 600; max-width: 560px; margin: 0 auto; }
+    #msg-erro, #msg-link-invalido { background: #fdecea; border: 2px solid var(--erro); color: var(--erro); }
 
-    @media (max-width: 520px) {
-      .grid { grid-template-columns: 1fr; }
-      .full { grid-column: span 1; }
-      .card { padding: 20px 16px; }
-    }
+    @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } .full { grid-column: span 1; } .card { padding: 20px 16px; } }
   </style>
 </head>
 <body>
@@ -195,13 +95,17 @@
 <header>
   <span class="pata">🐾</span>
   <h1>Castração Gratuita de Cães e Gatos</h1>
-  <p>Abrigo Pitukinha · Castração de cães e gatos</p>
-  <span class="badge-cidade" id="badge-cidade"></span>
+  <p>Mutirão de Castração</p>
+  <span class="badge-cidade" id="badge-cidade">Carregando...</span>
 </header>
 
-<div class="card" id="card-form">
-  <form id="formInscricao" novalidate>
+<div id="msg-link-invalido">
+  <h2>🔗 Link Inválido ou Incompleto</h2>
+  <p>Não conseguimos identificar o evento. Por favor, acesse utilizando o link completo fornecido pela prefeitura ou pela ONG.</p>
+</div>
 
+<div class="card" id="card-form" style="display:none;">
+  <form id="formInscricao" novalidate>
     <div class="section-title">🐶 🐱 Dados do Animal</div>
     <div class="grid">
       <div class="field">
@@ -309,7 +213,6 @@
     <button class="btn-submit" type="submit" id="btn-enviar">
       <span>🐾</span> CONFIRMAR INSCRIÇÃO
     </button>
-
   </form>
 </div>
 
@@ -320,17 +223,17 @@
 
 <div id="msg-sucesso">
   <h2>✅ Inscrição Feita!</h2>
-  <p>Seu pré-cadastro foi recebido com sucesso! 🐾 Nossa equipe analisará os dados do animal e entrará em contato em breve via WhatsApp para confirmar o horário agendado e passar as instruções para o dia do mutirão.</p>
+  <p>Seu pré-cadastro foi recebido com sucesso! 🐾 Nossa equipe analisará os dados e entrará em contato em breve via WhatsApp para confirmar o agendamento.</p>
 </div>
 
 <div id="msg-erro">
-  <p id="txt-erro">Ocorreu um erro. Tente novamente.</p>
+  <p id="txt-erro">Ocorreu um erro ao enviar. Tente novamente.</p>
 </div>
 
 <script>
 const sb = {
-  url: CONFIG.supabaseUrl,
-  key: CONFIG.supabaseKey,
+  url: SUPABASE_URL,
+  key: SUPABASE_KEY,
   async req(path, opts = {}) {
     const r = await fetch(`${this.url}/rest/v1/${path}`, {
       headers: {
@@ -348,7 +251,31 @@ const sb = {
   }
 };
 
-// ─── Máscaras de Entrada ──────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  if (!CONFIG) {
+    document.getElementById('badge-cidade').textContent = "Evento não encontrado";
+    document.getElementById('msg-link-invalido').style.display = 'block';
+  } else {
+    document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
+    document.getElementById('card-form').style.display = 'block';
+    verificarVagas();
+  }
+});
+
+async function verificarVagas() {
+  try {
+    const data = await sb.req(
+      `inscricoes?cidade=eq.${CONFIG.cidade}&select=id`,
+      { headers: { 'Prefer': 'count=exact' }, method: 'GET' }
+    );
+    let totalInscritos = Array.isArray(data) ? data.length : 0;
+    if (totalInscritos >= CONFIG.limiteVagas) {
+      document.getElementById('card-form').style.display = 'none';
+      document.getElementById('msg-esgotado').style.display = 'block';
+    }
+  } catch(e) { console.log(e); }
+}
+
 document.getElementById('cpf').addEventListener('input', function(){
   let v = this.value.replace(/\D/g,'').slice(0,11);
   v = v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
@@ -370,7 +297,6 @@ document.getElementById('fone').addEventListener('input', function(){
   this.value = v;
 });
 
-// ─── Validador de CPF Real ────────────────────────────────────────────────────
 function validarCPFReal(cpf) {
   cpf = cpf.replace(/\D/g, '');
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -387,26 +313,6 @@ function validarCPFReal(cpf) {
   return true;
 }
 
-let totalInscritos = 0;
-document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
-document.getElementById('txt-cidade-esg').textContent = CONFIG.cidade;
-
-async function verificarVagas() {
-  try {
-    const data = await sb.req(
-      `inscricoes?cidade=eq.${CONFIG.cidade}&select=id`,
-      { headers: { 'Prefer': 'count=exact' }, method: 'GET' }
-    );
-    totalInscritos = Array.isArray(data) ? data.length : 0;
-    if (totalInscritos >= CONFIG.limiteVagas) {
-      document.getElementById('card-form').style.display = 'none';
-      document.getElementById('msg-esgotado').style.display = 'block';
-    }
-  } catch(e) { console.log(e); }
-}
-verificarVagas();
-
-// ─── Submit do Formulário ─────────────────────────────────────────────────────
 document.getElementById('formInscricao').addEventListener('submit', async function(e) {
   e.preventDefault();
 
