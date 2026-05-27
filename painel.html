@@ -3,160 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel da Cidade – Abrigo Pitukinha</title>
+  <title>Painel da Cidade – Mutirão de Castração</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    const CONFIG = {
-      supabaseUrl: "https://nwmajgtiyxejeuwhkhbk.supabase.co",
-      supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8",
-      cidade:      "Itatiba",
-      dataEvento:  "25/06/2026",
-      senhaPainel: "pitukinha123"  // <-- DEFINA A SENHA DO PAINEL AQUI!
+    const SUPABASE_URL = "https://nwmajgtiyxejeuwhkhbk.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8";
+
+    // 🐾 LISTA COMPLETA DE CIDADES E SENHAS 🐾
+    const EVENTOS = {
+      "miguelopolis-18.06": { cidade: "Miguelópolis", dataEvento: "18/06/2026", limiteVagas: 300, senhaPainel: "castramig1806" },
+      "taquaritinga-19.06": { cidade: "Taquaritinga", dataEvento: "19/06/2026", limiteVagas: 300, senhaPainel: "castrataq1906" },
+      "araraquara-20.06": { cidade: "Araraquara", dataEvento: "20/06/2026", limiteVagas: 300, senhaPainel: "castraara2006" },
+      "sao-carlos-21.06": { cidade: "São Carlos", dataEvento: "21/06/2026", limiteVagas: 300, senhaPainel: "castrasao2106" },
+      "sao-paulo-24.06": { cidade: "São Paulo", dataEvento: "24/06/2026", limiteVagas: 300, senhaPainel: "castrasao2406" },
+      "itatiba-25.06": { cidade: "Itatiba", dataEvento: "25/06/2026", limiteVagas: 300, senhaPainel: "castraita2506" },
+      "florida-paulista-27.06": { cidade: "Flórida Paulista", dataEvento: "27/06/2026", limiteVagas: 300, senhaPainel: "castraflo2706" },
+      "adamantina-28.06": { cidade: "Adamantina", dataEvento: "28/06/2026", limiteVagas: 300, senhaPainel: "castraada2806" },
+      "jau-01.07": { cidade: "Jaú", dataEvento: "01/07/2026", limiteVagas: 300, senhaPainel: "castrajau0107" },
+      "lencois-paulista-02.07": { cidade: "Lençóis Paulista", dataEvento: "02/07/2026", limiteVagas: 300, senhaPainel: "castralen0207" },
+      "sao-manuel-03.07": { cidade: "São Manuel", dataEvento: "03/07/2026", limiteVagas: 300, senhaPainel: "castrasao0307" },
+      "elias-fausto-04.07": { cidade: "Elias Fausto", dataEvento: "04/07/2026", limiteVagas: 300, senhaPainel: "castraeli0407" },
+      "indaiatuba-05.07": { cidade: "Indaiatuba", dataEvento: "05/07/2026", limiteVagas: 300, senhaPainel: "castraind0507" },
+      "franca-10.07": { cidade: "Franca", dataEvento: "10/07/2026", limiteVagas: 300, senhaPainel: "castrafra1007" },
+      "ribeirao-preto-11.07": { cidade: "Ribeirão Preto", dataEvento: "11/07/2026", limiteVagas: 300, senhaPainel: "castrarib1107" },
+      "ribeirao-preto-12.07": { cidade: "Ribeirão Preto", dataEvento: "12/07/2026", limiteVagas: 300, senhaPainel: "castrarib1207" },
+      "jacupiranga-17.07": { cidade: "Jacupiranga", dataEvento: "17/07/2026", limiteVagas: 300, senhaPainel: "castrajac1707" },
+      "barra-do-turvo-18.07": { cidade: "Barra do Turvo", dataEvento: "18/07/2026", limiteVagas: 300, senhaPainel: "castrabar1807" },
+      "valinhos-19.07": { cidade: "Valinhos", dataEvento: "19/07/2026", limiteVagas: 300, senhaPainel: "castraval1907" },
+      "jales-24.07": { cidade: "Jales", dataEvento: "24/07/2026", limiteVagas: 300, senhaPainel: "castrajal2407" },
+      "fernandopolis-25.07": { cidade: "Fernandópolis", dataEvento: "25/07/2026", limiteVagas: 300, senhaPainel: "castrafer2507" },
+      "votuporanga-26.07": { cidade: "Votuporanga", dataEvento: "26/07/2026", limiteVagas: 300, senhaPainel: "castravot2607" },
+      "sao-paulo-25.09": { cidade: "São Paulo", dataEvento: "25/09/2026", limiteVagas: 300, senhaPainel: "castrasao2509" },
+      "sao-paulo-26.09": { cidade: "São Paulo", dataEvento: "26/09/2026", limiteVagas: 300, senhaPainel: "castrasao2609" },
+      "sao-paulo-mrsc-27.09": { cidade: "São Paulo MRSC", dataEvento: "27/09/2026", limiteVagas: 300, senhaPainel: "castrasao2709" }
     };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventoId = urlParams.get('evento');
+    const CONFIG = EVENTOS[eventoId]; 
   </script>
+
   <style>
-    :root {
-      --verde:   #1a7a4a;
-      --verde-cl:#e8f5ee;
-      --laranja: #f5a623;
-      --cinza:   #f4f6f4;
-      --texto:   #1c2b1e;
-      --borda:   #ccd8cc;
-      --erro:    #c0392b;
-      --azul:    #2980b9;
-      --radius:  12px;
-    }
+    :root { --verde: #1a7a4a; --verde-cl:#e8f5ee; --laranja: #f5a623; --cinza: #f4f6f4; --texto: #1c2b1e; --borda: #ccd8cc; --erro: #c0392b; --azul: #2980b9; --radius: 12px; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Nunito', sans-serif; background: var(--cinza); color: var(--texto); min-height: 100vh; }
 
-    /* Estado Bloqueado por Padrão */
     #conteudo-painel { display: none; }
-    #tela-bloqueio { 
-      display: flex; flex-direction: column; align-items: center; justify-content: center; 
-      min-height: 100vh; padding: 20px; text-align: center; background: var(--cinza);
-    }
-    .card-bloqueio {
-      background: white; padding: 40px 30px; border-radius: var(--radius);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 400px; width: 100%;
-    }
-    .btn-senha {
-      background: var(--verde); color: white; border: none; padding: 12px 20px;
-      border-radius: 8px; font-weight: 800; cursor: pointer; margin-top: 15px; width: 100%;
-    }
+    #tela-bloqueio { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; background: var(--cinza); }
+    .card-bloqueio { background: white; padding: 40px 30px; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 400px; width: 100%; }
+    .btn-senha { background: var(--verde); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; margin-top: 15px; width: 100%; }
 
-    header {
-      background: var(--verde); color: white; padding: 24px 20px; text-align: center;
-    }
+    header { background: var(--verde); color: white; padding: 24px 20px; text-align: center; }
     header h1 { font-family: 'Fraunces', serif; font-size: 1.6rem; }
     header p { opacity: 0.85; margin-top: 6px; font-size: 0.9rem; }
     .badge { display: inline-block; margin-top: 10px; background: var(--laranja); color: #1c2b1e; font-weight: 800; padding: 4px 16px; border-radius: 99px; font-size: 0.85rem; }
 
     .container { max-width: 960px; margin: 24px auto; padding: 0 16px; }
+    .card { background: white; border-radius: var(--radius); box-shadow: 0 2px 18px rgba(26,122,74,0.08); padding: 24px; margin-bottom: 20px; }
 
-    .card {
-      background: white; border-radius: var(--radius);
-      box-shadow: 0 2px 18px rgba(26,122,74,0.08); padding: 24px; margin-bottom: 20px;
-    }
-
-    /* ── RESUMO ── */
     .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
     .stat { background: var(--verde-cl); border-radius: 10px; padding: 20px; text-align: center; }
     .stat .num { font-size: 2rem; font-weight: 900; color: var(--verde); }
     .stat .leg { font-size: 0.78rem; font-weight: 700; color: #557055; text-transform: uppercase; margin-top: 4px; }
 
-    /* ── AÇÕES ── */
     .acoes { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn {
-      flex: 1; min-width: 180px; padding: 14px 16px; border: none; border-radius: 10px;
-      font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
+    .btn { flex: 1; min-width: 180px; padding: 14px 16px; border: none; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: opacity 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn:hover { opacity: 0.88; }
     .btn:active { transform: scale(0.97); }
     .btn-todos { background: var(--verde); color: white; }
-    .btn-csv   { background: #eaf0ea; color: var(--verde); border: 2px solid var(--borda); }
+    .btn-csv { background: #eaf0ea; color: var(--verde); border: 2px solid var(--borda); }
 
-    /* ── LISTA ── */
-    .sec-title {
-      font-family: 'Fraunces', serif; font-size: 1rem; color: var(--verde);
-      margin-bottom: 14px; border-bottom: 2px solid var(--verde-cl); padding-bottom: 8px;
-    }
-
-    .busca {
-      width: 100%; padding: 10px 14px; border: 1.5px solid var(--borda); border-radius: 8px;
-      font-family: 'Nunito', sans-serif; font-size: 1rem; margin-bottom: 16px;
-    }
-    .busca:focus { outline: none; border-color: var(--verde); }
-
+    .sec-title { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--verde); margin-bottom: 14px; border-bottom: 2px solid var(--verde-cl); padding-bottom: 8px; }
+    .busca { width: 100%; padding: 10px 14px; border: 1.5px solid var(--borda); border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 1rem; margin-bottom: 16px; }
+    
     table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    thead th {
-      background: var(--verde); color: white; padding: 10px 12px; text-align: left;
-      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
-    }
-    thead th:first-child { border-radius: 8px 0 0 0; }
-    thead th:last-child  { border-radius: 0 8px 0 0; }
-    tbody tr { border-bottom: 1px solid #e8ede8; transition: background 0.15s; }
+    thead th { background: var(--verde); color: white; padding: 10px 12px; text-align: left; font-size: 0.78rem; text-transform: uppercase; }
+    tbody tr { border-bottom: 1px solid #e8ede8; }
     tbody tr:hover { background: var(--verde-cl); }
     td { padding: 10px 12px; vertical-align: middle; }
-    td:last-child { white-space: nowrap; text-align: right; }
-    .num-tag {
-      background: var(--verde); color: white; font-weight: 800; font-size: 0.75rem;
-      padding: 2px 8px; border-radius: 99px;
-    }
     
-    .btn-mini-ver {
-      padding: 5px 9px; background: var(--azul); color: white; border: none;
-      border-radius: 6px; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; margin-right: 4px;
-    }
-    .btn-mini-ver:hover { background: #1f618d; }
+    .btn-mini-ver { padding: 5px 9px; background: var(--azul); color: white; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; margin-right: 4px; }
+    .btn-mini-pdf { padding: 5px 9px; background: var(--laranja); color: #1c2b1e; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; margin-right: 4px; }
+    .btn-deletar { padding: 5px 9px; background: var(--erro); color: white; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; }
 
-    .btn-mini-pdf {
-      padding: 5px 9px; background: var(--laranja); color: #1c2b1e; border: none;
-      border-radius: 6px; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; margin-right: 4px;
-    }
-    .btn-mini-pdf:hover { opacity: 0.85; }
-    
-    .btn-deletar {
-      padding: 5px 9px; background: var(--erro); color: white; border: none;
-      border-radius: 6px; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer;
-    }
-    .btn-deletar:hover { background: #962d22; }
-
-    /* ---- MODAL DE VISUALIZAÇÃO ---- */
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px;
-    }
-    .modal-content {
-      background: white; border-radius: var(--radius); max-width: 600px; width: 100%;
-      max-height: 85vh; overflow-y: auto; padding: 24px; box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-    }
-    .modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid var(--verde-cl); padding-bottom: 10px; margin-bottom: 16px;
-    }
-    .modal-header h3 { font-family: 'Fraunces', serif; color: var(--verde); }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
+    .modal-content { background: white; border-radius: var(--radius); max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--verde-cl); padding-bottom: 10px; margin-bottom: 16px; }
     .close-modal { font-size: 1.5rem; cursor: pointer; color: #777; font-weight: bold; }
     .close-modal:hover { color: var(--erro); }
-    .info-group { margin-bottom: 16px; }
-    .info-group h4 { font-size: 0.85rem; color: var(--verde); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; border-left: 3px solid var(--laranja); padding-left: 6px; }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; }
-    .info-item { background: #f8faf8; padding: 8px 12px; border-radius: 6px; border: 1px solid #eef2ee; }
-    .info-item span { display: block; font-size: 0.72rem; font-weight: 800; color: #778877; text-transform: uppercase; }
+    .info-group { margin-bottom: 20px; }
+    .info-group h4 { font-size: 0.9rem; color: var(--verde); text-transform: uppercase; margin-bottom: 10px; border-left: 3px solid var(--laranja); padding-left: 8px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.9rem; }
+    .info-item { background: #f8faf8; padding: 10px 14px; border-radius: 6px; border: 1px solid #eef2ee; }
+    .info-item span { display: block; font-size: 0.72rem; color: #778877; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
     .info-full { grid-column: span 2; }
+    .loading, .empty { text-align: center; padding: 40px; color: #8a988a; }
 
-    .loading { text-align: center; padding: 40px; color: #8a988a; font-size: 1.1rem; }
-    .empty   { text-align: center; padding: 30px; color: #8a988a; }
-
-    @media(max-width:640px){
-      .stats { grid-template-columns: 1fr 1fr; }
-      table { font-size: 0.75rem; }
-      .info-grid { grid-template-columns: 1fr; }
-      .info-full { grid-column: span 1; }
-      td:last-child { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-    }
+    @media(max-width: 600px){ .info-grid { grid-template-columns: 1fr; } .info-full { grid-column: span 1; } }
   </style>
 </head>
 <body>
@@ -164,62 +109,48 @@
 <div id="tela-bloqueio">
   <div class="card-bloqueio">
     <span style="font-size: 3rem; display:block; margin-bottom: 10px;">🔒</span>
-    <h2 style="font-family:'Fraunces', serif; color: var(--verde); margin-bottom: 8px;">Painel Restrito</h2>
-    <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">Por favor, insira a senha de acesso da cidade para visualizar as inscrições.</p>
-    <button class="btn-senha" onclick="solicitarSenha()">Digitar Senha</button>
+    <h2>Painel Restrito</h2>
+    <p id="desc-bloqueio">Verificando segurança...</p>
+    <button id="btn-inserir-senha" class="btn-senha" onclick="solicitarSenha()" style="display:none;">Digitar Senha</button>
   </div>
 </div>
 
 <div id="conteudo-painel">
   <header>
     <span style="font-size:2rem">🐾</span>
-    <h1>Painel da Cidade</h1>
-    <p>Abrigo Pitukinha – Castração Gratuita</p>
+    <h1>Painel de Gerenciamento</h1>
+    <p>Mutirão de Castração</p>
     <span class="badge" id="badge-cidade"></span>
   </header>
 
   <div class="container">
     <div class="card">
       <div class="stats">
-        <div class="stat">
-          <div class="num" id="stat-total">–</div>
-          <div class="leg">Inscritos</div>
-        </div>
-        <div class="stat">
-          <div class="num" id="stat-vagas">–</div>
-          <div class="leg">Vagas restantes</div>
-        </div>
-        <div class="stat">
-          <div class="num" id="stat-data">–</div>
-          <div class="leg">Data do evento</div>
-        </div>
+        <div class="stat"><div class="num" id="stat-total">–</div><div class="leg">Inscritos</div></div>
+        <div class="stat"><div class="num" id="stat-vagas">–</div><div class="leg">Vagas restantes</div></div>
+        <div class="stat"><div class="num" id="stat-data">–</div><div class="leg">Data do evento</div></div>
       </div>
     </div>
 
     <div class="card">
       <div class="sec-title">⬇️ Downloads Gabinete</div>
       <div class="acoes">
-        <button class="btn btn-todos" onclick="baixarTodosPDF()">🗂️ Baixar TODAS as Fichas (PDF)</button>
+        <button class="btn btn-todos" onclick="baixarTodosPDF()">🗂️ Baixar TODAS as Fichas (Ordem Alfabética)</button>
         <button class="btn btn-csv"   onclick="exportarCSV()">📊 Exportar Lista (Excel/CSV)</button>
       </div>
     </div>
 
     <div class="card">
-      <div class="sec-title">📋 Lista de Inscritos Realizados</div>
+      <div class="sec-title">📋 Lista de Inscrições Realizadas</div>
       <input class="busca" type="text" id="busca" placeholder="🔍 Buscar por nome do animal ou tutor..." oninput="filtrarTabela()">
-      <div id="tabela-wrap">
-        <div class="loading">🐾 Carregando inscrições...</div>
-      </div>
+      <div id="tabela-wrap"><div class="loading">🐾 Carregando inscrições...</div></div>
     </div>
   </div>
 </div>
 
 <div class="modal" id="viewModal">
   <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="m-titulo">Ficha do Animal</h3>
-      <span class="close-modal" onclick="fecharModal()">&times;</span>
-    </div>
+    <div class="modal-header"><h3 id="m-titulo">Ficha do Animal</h3><span class="close-modal" onclick="fecharModal()">&times;</span></div>
     
     <div class="info-group">
       <h4>Dados do Paciente</h4>
@@ -229,16 +160,16 @@
         <div class="info-item"><span>Sexo</span><strong id="m-sexo"></strong></div>
         <div class="info-item"><span>Raça</span><strong id="m-raca"></strong></div>
         <div class="info-item"><span>Cor</span><strong id="m-cor"></strong></div>
-        <div class="info-item"><span>Idade Est.</span><strong id="m-idade"></strong></div>
-        <div class="info-item"><span>Peso</span><strong id="m-peso"></strong></div>
+        <div class="info-item"><span>Idade</span><strong id="m-idade"></strong></div>
+        <div class="info-item"><span>Peso Declarado</span><strong id="m-peso"></strong></div>
         <div class="info-item"><span>Vacinado?</span><strong id="m-vacinado"></strong></div>
-        <div class="info-item"><span>Vermifugado?</span><strong id="m-vermifugado"></strong></div>
-        <div class="info-item info-full"><span>Histórico de Doenças / Cirurgia</span><strong id="m-doente"></strong></div>
-        <div class="info-item info-full"><span>Usa Medicamentos?</span><strong id="m-medicamento"></strong></div>
+        <div class="info-item info-full"><span>Vermifugado?</span><strong id="m-vermifugado"></strong></div>
+        <div class="info-item info-full"><span>Histórico Médico (Doenças/Cirurgias)</span><strong id="m-doente"></strong></div>
+        <div class="info-item info-full"><span>Medicamentos em Uso</span><strong id="m-medicamento"></strong></div>
       </div>
     </div>
 
-    <div class="info-group" style="margin-top:20px;">
+    <div class="info-group">
       <h4>Dados do Responsável</h4>
       <div class="info-grid">
         <div class="info-item info-full"><span>Nome do Tutor</span><strong id="m-nome-tutor"></strong></div>
@@ -259,8 +190,8 @@
 const up = s => (s || '').toUpperCase();
 
 const sb = {
-  url: CONFIG.supabaseUrl,
-  key: CONFIG.supabaseKey,
+  url: SUPABASE_URL,
+  key: SUPABASE_KEY,
   async req(path, opts = {}) {
     const r = await fetch(`${this.url}/rest/v1/${path}`, {
       headers: {
@@ -279,81 +210,76 @@ const sb = {
 
 let inscricoes = [];
 let filtradas  = [];
+let mapaCPFContagem = {}; 
 
-// ─── LÓGICA DE CONTROLE DE ACESSO POR SENHA ──────────────────────────────────
+window.onload = function() { 
+  if (!CONFIG) {
+    document.getElementById('desc-bloqueio').innerHTML = "<b>❌ Link Inválido!</b><br>Nenhum evento encontrado.";
+    return;
+  }
+  document.getElementById('desc-bloqueio').innerHTML = `Por favor, insira a senha de acesso da cidade de <b>${CONFIG.cidade}</b>.`;
+  document.getElementById('btn-inserir-senha').style.display = "block";
+  solicitarSenha(); 
+};
+
 function solicitarSenha() {
-  const entrada = prompt("Digite a senha de segurança do painel:");
+  const entrada = prompt(`Digite a senha de segurança de ${CONFIG.cidade}:`);
   if (entrada === CONFIG.senhaPainel) {
     document.getElementById('tela-bloqueio').style.display = 'none';
     document.getElementById('conteudo-painel').style.display = 'block';
-    
-    // Configura os dados textuais e dispara a busca no Supabase
     document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
     document.getElementById('stat-data').textContent = CONFIG.dataEvento;
     carregar();
   } else if (entrada !== null) {
-    alert("Senha incorreta! Acesso negado.");
+    alert("Senha incorreta!");
   }
 }
-
-// Dispara a caixa de senha assim que a página abre
-window.onload = function() {
-  solicitarSenha();
-};
 
 async function carregar() {
   try {
     const res = await sb.req(`inscricoes?cidade=eq.${CONFIG.cidade}&order=id.asc`);
     inscricoes = Array.isArray(res) ? res : [];
+    
+    mapaCPFContagem = {};
+    inscricoes.forEach(ins => {
+      if (ins.cpf) { mapaCPFContagem[ins.cpf] = (mapaCPFContagem[ins.cpf] || 0) + 1; }
+    });
+
     filtradas = [...inscricoes];
     atualizarStats();
     renderTabela();
   } catch(e) {
-    document.getElementById('tabela-wrap').innerHTML =
-      `<div class="empty">❌ Erro ao carregar: ${e.message}</div>`;
+    document.getElementById('tabela-wrap').innerHTML = `<div class="empty">❌ Erro: ${e.message}</div>`;
   }
 }
 
 function atualizarStats() {
   const total = inscricoes.length;
   document.getElementById('stat-total').textContent  = total;
-  document.getElementById('stat-vagas').textContent  = Math.max(0, 300 - total);
+  document.getElementById('stat-vagas').textContent  = Math.max(0, CONFIG.limiteVagas - total);
 }
 
 function renderTabela() {
   if (!filtradas.length) {
-    document.getElementById('tabela-wrap').innerHTML =
-      '<div class="empty">Nenhuma inscrição encontrada.</div>';
+    document.getElementById('tabela-wrap').innerHTML = '<div class="empty">Nenhuma inscrição encontrada para este evento.</div>';
     return;
   }
-  let html = `
-    <table>
-      <thead>
-        <tr>
-          <th>Nº</th>
-          <th>Animal</th>
-          <th>Espécie / Sexo</th>
-          <th>Tutor</th>
-          <th>Fone</th>
-          <th style="text-align:right">Ações</th>
-        </tr>
-      </thead>
-      <tbody>`;
+  let html = `<table><thead><tr><th>Nº</th><th>Animal</th><th>Espécie / Sexo</th><th>Tutor</th><th>Fone</th><th style="text-align:right">Ações</th></tr></thead><tbody>`;
   filtradas.forEach((ins, i) => {
     const nomeLimpo = (ins.nome_animal || '').replace(/'/g, "\\x27").replace(/"/g, "\\x22");
-    html += `
-      <tr>
-        <td><span class="num-tag">#${String(i + 1).padStart(3,'0')}</span></td>
-        <td><strong>${ins.nome_animal || '–'}</strong></td>
-        <td>${ins.especie || ''} · ${ins.sexo || ''}</td>
-        <td>${ins.nome_tutor || '–'}</td>
-        <td>${ins.fone || '–'}</td>
-        <td>
-          <button class="btn-mini-ver" onclick="visualizarInscricao(${ins.id})">👁️ Ver</button>
-          <button class="btn-mini-pdf" onclick="baixarUmPDF(${ins.id})">⬇️ PDF</button>
-          <button class="btn-deletar" onclick="excluirInscricao(${ins.id}, '${nomeLimpo}')">❌ Excluir</button>
-        </td>
-      </tr>`;
+    
+    html += `<tr>
+      <td><span style="background:var(--verde); color:white; font-weight:800; font-size:0.75rem; padding:2px 8px; border-radius:99px;">#${String(i + 1).padStart(3,'0')}</span></td>
+      <td><strong>${ins.nome_animal || '–'}</strong></td>
+      <td>${ins.especie || ''} · ${ins.sexo || ''}</td>
+      <td>${ins.nome_tutor || '–'}</td>
+      <td>${ins.fone || '–'}</td>
+      <td style="text-align:right">
+        <button class="btn-mini-ver" onclick="visualizarInscricao(${ins.id})">👁️ Ver</button>
+        <button class="btn-mini-pdf" onclick="baixarUmPDF(${ins.id})">⬇️ PDF</button>
+        <button class="btn-deletar" onclick="excluirInscricao(${ins.id}, '${nomeLimpo}')">❌</button>
+      </td>
+    </tr>`;
   });
   html += '</tbody></table>';
   document.getElementById('tabela-wrap').innerHTML = html;
@@ -371,8 +297,8 @@ function filtrarTabela() {
 function visualizarInscricao(id) {
   const ins = inscricoes.find(i => i.id === id);
   if (!ins) return;
-
-  document.getElementById('m-titulo').textContent = `Ficha de Inscrição – ${up(ins.nome_animal)}`;
+  
+  document.getElementById('m-titulo').textContent = `Ficha – ${up(ins.nome_animal)}`;
   document.getElementById('m-nome-animal').textContent = up(ins.nome_animal);
   document.getElementById('m-especie').textContent = up(ins.especie);
   document.getElementById('m-sexo').textContent = up(ins.sexo);
@@ -390,7 +316,7 @@ function visualizarInscricao(id) {
   document.getElementById('m-rg').textContent = up(ins.rg);
   document.getElementById('m-cpf').textContent = ins.cpf || '–';
   document.getElementById('m-fone').textContent = ins.fone || '–';
-  document.getElementById('m-email').textContent = (ins.email || '–').toUpperCase();
+  document.getElementById('m-email').textContent = (ins.email || '–').toLowerCase();
   document.getElementById('m-endereco').textContent = up(ins.endereco);
   document.getElementById('m-bairro').textContent = up(ins.bairro);
   document.getElementById('m-cep').textContent = ins.cep || '–';
@@ -398,137 +324,212 @@ function visualizarInscricao(id) {
   document.getElementById('viewModal').style.display = 'flex';
 }
 
-function fecharModal() {
-  document.getElementById('viewModal').style.display = 'none';
-}
-
-window.onclick = function(e) {
-  const modal = document.getElementById('viewModal');
-  if (e.target == modal) fecharModal();
-}
+function fecharModal() { document.getElementById('viewModal').style.display = 'none'; }
+window.onclick = function(e) { if (e.target == document.getElementById('viewModal')) fecharModal(); }
 
 function baixarUmPDF(id) {
   const ins = inscricoes.find(i => i.id === id);
-  if (ins) gerarFichaAlinhada(ins);
+  if (ins) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    adicionarFichaAoDoc(doc, ins);
+    doc.save(`Prontuario_${up(ins.nome_animal)}.pdf`);
+  }
 }
 
 async function baixarTodosPDF() {
   if (!inscricoes.length) { alert('Nenhuma inscrição para baixar.'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  inscricoes.forEach((d, idx) => {
+  
+  const listaOrdenada = [...inscricoes].sort((a, b) => 
+    (a.nome_tutor || '').localeCompare(b.nome_tutor || '', 'pt', { sensitivity: 'base' })
+  );
+
+  listaOrdenada.forEach((d, idx) => {
     if (idx > 0) doc.addPage();
     adicionarFichaAoDoc(doc, d);
   });
-  doc.save(`Fichas_Completas_${CONFIG.cidade}.pdf`);
+  doc.save(`Prontuarios_Ordenados_${CONFIG.cidade}.pdf`);
 }
 
 function exportarCSV() {
   if (!inscricoes.length) { alert('Nenhuma inscrição para exportar.'); return; }
-  const cabecalho = ['Nº','Animal','Espécie','Sexo','Raça','Cor','Idade','Peso','Vacinado','Vermifugado','Doente','Medicamento','Tutor','Data Nasc','RG','CPF','Email','Fone','Endereço','Bairro','CEP'];
+  const cabecalho = ['Nº','Animal','Especie','Sexo','Tutor','CPF','Fone','Bairro'];
   const linhas = inscricoes.map((i, idx) => [
-    String(idx + 1).padStart(3,'0'),
-    i.nome_animal, i.especie, i.sexo, i.raca, i.cor, i.idade, i.peso, i.vacinado, i.vermifugado, i.doente, i.medicamento,
-    i.nome_tutor, i.data_nascimento, i.rg, i.cpf, i.email, i.fone, i.endereco, i.bairro, i.cep
+    String(idx + 1).padStart(3,'0'), i.nome_animal, i.especie, i.sexo, i.nome_tutor, i.cpf, i.fone, i.bairro
   ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
-
   const csv = [cabecalho, ...linhas].map(r => r.join(',')).join('\n');
   const blob = new Blob(['\ufeff'+csv], { type: 'text/csv;charset=utf-8;' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `Lista_Presenca_${CONFIG.cidade}.csv`;
+  a.download = `Lista_${CONFIG.cidade}.csv`;
   a.click();
 }
 
 async function excluirInscricao(id, nomeAnimal) {
-  if (!confirm(`Tem certeza absoluta que deseja excluir a inscrição do animal "${nomeAnimal}"?`)) return;
+  if (!confirm(`Excluir inscrição de "${nomeAnimal}"?`)) return;
   try {
     await sb.req(`inscricoes?id=eq.${id}`, { method: 'DELETE' });
-    alert('Inscrição removida com sucesso!');
     carregar(); 
-  } catch(e) {
-    alert('Erro ao excluir do banco de dados: ' + e.message);
-  }
+  } catch(e) { alert(e.message); }
 }
 
 function adicionarFichaAoDoc(doc, d) {
   const up = s => (s || '').toUpperCase();
-  doc.setFont("helvetica", "bold");
   
-  // QUADRO DO CABEÇALHO UNIFICADO e INTEGRADO
-  doc.rect(10, 10, 190, 16, 'S'); // Aumentado um pouco a altura do quadro para o novo título
-  doc.setFontSize(13);
-  doc.text("PRONTUÁRIO: CASTRAÇÃO E MICROCHIPAGEM PARA CÃES E GATOS", 105, 20, { align: "center" });
-
-  // O texto antigo "FICHA DE INSCRIÇÃO" foi removido.
-  // Os Dados do Animal foram puxados ligeiramente para cima para otimizar espaço.
-  doc.setFontSize(10);
-  doc.text("DADOS DO ANIMAL", 10, 40);
-  doc.rect(10, 42, 190, 39);
-  doc.line(10, 52, 200, 52); doc.line(10, 62, 200, 62); doc.line(10, 72, 200, 72); 
-  doc.line(73, 42, 73, 72); doc.line(136, 42, 136, 72);
-
-  doc.text(`ESPÉCIE: ${up(d.especie)}`, 12, 48);
-  doc.text(`NOME: ${up(d.nome_animal)}`, 75, 48);
-  doc.text(`SEXO: ${up(d.sexo)}`, 138, 48);
-  doc.text(`RAÇA: ${up(d.raca)}`, 12, 58);
-  doc.text(`COR: ${up(d.cor)}`, 75, 58);
-  doc.text(`IDADE: ${up(d.idade)}`, 138, 58);
-  doc.text(`PESO: ${up(d.peso)} KG`, 12, 68);
-  doc.text(`VACINADO: ${up(d.vacinado)}`, 75, 68);
-  doc.text(`VERMIFUGADO: ${up(d.vermifugado)}`, 138, 68);
-
-  doc.setFontSize(8);
-  doc.text(`ESTEVE DOENTE NOS ÚLTIMOS 6 MESES OU REALIZOU CIRURGIA?  ${up(d.doente)}`, 12, 76);
-  doc.text(`TOMA MEDICAMENTO? QUAIS?  ${up(d.medicamento)}`, 12, 80);
-
-  doc.setFontSize(10);
-  doc.text("DADOS DO RESPONSÁVEL", 10, 91);
-  doc.rect(10, 93, 190, 49); 
-  doc.line(10, 103, 200, 103); doc.line(10, 113, 200, 113); doc.line(10, 123, 200, 123); doc.line(10, 132, 200, 132);
-  doc.line(73, 103, 73, 113); doc.line(136, 103, 136, 113); doc.line(105, 113, 105, 123); doc.line(105, 132, 105, 142);
-
-  doc.setFontSize(9);
-  doc.text(`NOME: ${up(d.nome_tutor)}`, 12, 99);
-  doc.text(`DATA NASC.: ${d.data_nascimento || '–'}`, 12, 109);
-  doc.text(`RG: ${up(d.rg)}`, 75, 109);
-  doc.text(`CPF: ${d.cpf || '–'}`, 138, 109);
-  doc.text(`E-MAIL: ${up(d.email)}`, 12, 119);
-  doc.text(`FONE: ${d.fone || '–'}`, 107, 119);
-  doc.text(`ENDEREÇO: ${up(d.endereco)}`, 12, 128);
-  doc.text(`BAIRRO: ${up(d.bairro)}`, 12, 138); 
-  doc.text(`CEP: ${d.cep || '–'}`, 107, 138);       
-
-// ─── TERMO ANESTÉSICO ATUALIZADO ───
+  // --- CABEÇALHO ---
+  doc.setFont("helvetica", "bold");
+  doc.rect(10, 7, 190, 10, 'S');
   doc.setFontSize(11);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMO DE AUTORIZAÇÃO ANESTÉSICO, CIRÚRGICO E MICROCHIPAGEM", 105, 160, { align: "center" });
-  
-  doc.setFontSize(8.5); 
-  doc.setFont("helvetica", "italic");
-  doc.text("Autorizo a realização dos procedimentos anestésicos, de castração e microchipagem no animal identificado a ser realizado.", 10, 166, {maxWidth: 185});
-  doc.text("Confirmo que após a saída do animal da Unidade Móvel, na qualidade de responsável, tomarei todos os cuidados necessários, observando o paciente e imediatamente comunicando ao médico veterinário quaisquer complicações ou acidentes que venham a ocorrer.", 10, 172, {maxWidth: 185});
-  doc.text("Declaro estar ciente que é minha responsabilidade realizar os exames pré-operatórios e que a não realização desses exames podem interferir no sucesso do procedimento.", 10, 182, {maxWidth: 185});
-  doc.text("Declaro ter sido esclarecido acerca dos possíveis riscos inerentes aos procedimentos propostos, isento de quaisquer responsabilidades decorrentes de tais riscos.", 10, 189, {maxWidth: 185});
+  doc.text("PRONTUÁRIO: CASTRAÇÃO E MICROCHIPAGEM PARA CÃES E GATOS", 105, 13.5, { align: "center" });
 
-  // ─── TERMO DE USO DE IMAGEM (Empurrado um pouco para baixo para dar espaço) ───
+  // --- DADOS DO PACIENTE ---
+  doc.setFontSize(8.5);
+  let tituloPaciente = "DADOS DO PACIENTE (ANIMAL)";
+  let qtde = mapaCPFContagem[d.cpf];
+  
+  if (qtde > 1) { 
+    let extra = qtde - 1;
+    let palavraAnimal = extra > 1 ? 'ANIMAIS' : 'ANIMAL';
+    let palavraCadastro = extra > 1 ? 'CADASTRADOS' : 'CADASTRADO';
+    tituloPaciente += `      (+${extra} ${palavraAnimal} NESTE CPF ${palavraCadastro})`; 
+  }
+  
+  doc.text(tituloPaciente, 10, 22);
+
+  doc.rect(10, 24, 190, 31);
+  doc.line(10, 31.5, 200, 31.5); doc.line(10, 39, 200, 39); doc.line(10, 46.5, 200, 46.5);
+  doc.line(73, 24, 73, 46.5); doc.line(136, 24, 136, 46.5);
+
+  doc.text(`ESPÉCIE: ${up(d.especie)}`, 12, 29);
+  doc.text(`NOME: ${up(d.nome_animal)}`, 75, 29);
+  doc.text(`SEXO: ${up(d.sexo)}`, 138, 29);
+  doc.text(`RAÇA: ${up(d.raca)}`, 12, 36.5);
+  doc.text(`COR: ${up(d.cor)}`, 75, 36.5);
+  doc.text(`IDADE: ${up(d.idade)}`, 138, 36.5);
+  doc.text(`PESO DECLARADO: ${up(d.peso)} KG`, 12, 44);
+  doc.text(`VACINADO: ${up(d.vacinado)}`, 75, 44);
+  doc.text(`VERMIFUGADO: ${up(d.vermifugado)}`, 138, 44);
+  doc.setFontSize(7.2);
+  doc.text(`HIST. DOENÇAS/CIRURGIAS: ${up(d.doente)}`, 12, 50.5);
+  doc.text(`MEDICAMENTOS EM USO: ${up(d.medicamento)}`, 12, 53.5);
+
+  // --- PRONTUÁRIO MÉDICO CIRÚRGICO ---
+  doc.setFontSize(8.5);
   doc.setFont("helvetica", "bold");
-  doc.text("TERMO DE AUTORIZAÇÃO USO DE DADOS E IMAGENS", 105, 202, { align: "center" });
-  doc.setFont("helvetica", "italic");
-  doc.text("Autorizo a coleta, o registro e a utilização de minhas imagens e dos meus dados pessoais para fins de prestação de contas e contatos, de acordo com a Lei Geral de Proteção de Dados.", 10, 208, {maxWidth: 185});
+  doc.text("PRONTUÁRIO DO ANIMAL (USO EXCLUSIVO VETERINÁRIO)", 10, 61.5);
+  
+  doc.rect(10, 63.5, 190, 107.5);
+  
+  doc.setDrawColor(220); 
+  doc.line(10, 74.5, 200, 74.5);
+  doc.line(10, 91, 200, 91);
+  doc.line(10, 98.5, 200, 98.5);
+  doc.line(10, 112, 200, 112);
+  doc.line(10, 128.5, 200, 128.5);
+  doc.setDrawColor(0);
+
+  doc.setFontSize(7);
+  
+  doc.setFont("Helvetica", "bold"); doc.text("MUCOSA OCULAR:", 12, 68);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) PERLÁCEA     (   ) NORMAL     (   ) HIPERÊMICA     (   ) CIANÓTICA     (   ) ICTÉRICA", 45, 68);
+  doc.setFont("helvetica", "bold"); doc.text("MUCOSA ORAL:", 12, 71.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) PERLÁCEA     (   ) NORMAL     (   ) HIPERÊMICA     (   ) CIANÓTICA     (   ) ICTÉRICA", 45, 71.5);
+  
+  doc.setFont("helvetica", "bold"); doc.text("TPC:", 12, 78);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) 1 A 2 - NORMAL      (   ) 2 A 4 - DESIDRATADO      (   ) > 5 DESIDRATAÇÃO GRAVE", 45, 78);
+  
+  doc.setFont("helvetica", "bold"); doc.text("LINF. SUB-MANDIBULAR:", 12, 81.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL     (   ) ANORMAL         ALTERAÇÃO: ______________________________", 52, 81.5);
+  doc.setFont("helvetica", "bold"); doc.text("LINF. PRÉ-ESCAPULAR:", 12, 85);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL     (   ) ANORMAL         ALTERAÇÃO: ______________________________", 52, 85);
+  doc.setFont("helvetica", "bold"); doc.text("LINF. POPLÍTEO:", 12, 88.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL     (   ) ANORMAL         ALTERAÇÃO: ______________________________", 52, 88.5);
+  
+  doc.setFont("helvetica", "bold"); doc.text("DOENÇA PERIODONTAL:", 12, 94.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) SIM     (   ) NÃO         OBSERVAÇÃO: _______________________________________", 52, 94.5);
+  
+  doc.setFont("helvetica", "bold"); doc.text("NÍVEL DE HIDRATAÇÃO:", 12, 102);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL     (   ) DISCRETA - 5 A 7     (   ) MODERADA - 8 A 10     (   ) INTENSA - 11 A 12", 52, 102);
+  doc.setFont("helvetica", "bold"); doc.text("AUSCULTAÇÃO CARDÍACA:", 12, 105.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL     (   ) ANORMAL         OBSERVAÇÃO: ______________________________", 52, 105.5);
+  doc.setFont("helvetica", "bold"); doc.text("AUSCULTAÇÃO PULMONAR:", 12, 109);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL     (   ) ANORMAL         OBSERVAÇÃO: ______________________________", 52, 109);
+  
+  doc.setFont("helvetica", "bold"); doc.text("PALPAÇÃO ABDOMINAL:", 12, 115.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL     (   ) ANORMAL         OBSERVAÇÃO: ______________________________", 52, 115.5);
+  doc.setFont("helvetica", "bold"); doc.text("TEMPERATURA:", 12, 119);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NORMAL (37,2º A 39,5º)      (   ) ALTERADA (>39,5º)      ATUAL: _________ °C", 52, 119);
+  doc.setFont("helvetica", "bold"); doc.text("PESO CORPÓREO:", 12, 122.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) MUITO MAGRO     (   ) MAGRO     (   ) NORMAL     (   ) OBESO", 52, 122.5);
+  doc.setFont("helvetica", "bold"); doc.text("CONDIÇÕES DO PELO:", 12, 126);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) OPACO     (   ) NORMAL     (   ) QUEBRADIÇO", 52, 126);
+  
+  doc.setFont("helvetica", "bold"); doc.text("ECTOPARASITAS:", 12, 131.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) NÃO    (   ) SIM    (   ) PULGA    (   ) CARRAPATO    (   ) OUTROS", 42, 131.5);
+  doc.setFont("helvetica", "bold"); doc.text("NÍVEL DE CONSCIÊNCIA:", 12, 135);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) ALERTA    (   ) DEPRESSÃO    (   ) ESTUPOR    (   ) COMA", 47, 135);
+  doc.setFont("helvetica", "bold"); doc.text("TEMPERAMENTO:", 12, 138.5);
+  doc.setFont("helvetica", "normal"); doc.text("(   ) FEROZ     (   ) BRAVO     (   ) DÓCIL     (   ) MEDROSO", 42, 138.5);
+
+  doc.setFontSize(7.5);
+  doc.setFont("helvetica", "bold"); doc.text("ANIMAL:   (   ) APTO PARA PROCEDIMENTO          (   ) NÃO APTO PARA PROCEDIMENTO", 15, 145);
+  
+  doc.setFont("helvetica", "normal"); 
+  doc.text("MOTIVO: _________________________________________________________________________________________________________________", 15, 152);
+  
+  doc.line(45, 163, 165, 163);
+  doc.setFont("helvetica", "bold");
+  doc.text("CARIMBO E ASSINATURA DO VETERINÁRIO RESPONSÁVEL", 105, 167, { align: "center" });
+
+  // --- DADOS DO RESPONSÁVEL ---
+  doc.setFontSize(8.5);
+  doc.setFont("helvetica", "bold");
+  doc.text("DADOS DO RESPONSÁVEL (TUTOR)", 10, 178);
+  doc.rect(10, 180, 190, 30);
+  doc.line(10, 187.5, 200, 187.5); doc.line(10, 195, 200, 195); doc.line(10, 202.5, 200, 202.5);
+  doc.line(140, 180, 140, 187.5);
+  doc.line(73, 187.5, 73, 195); doc.line(136, 187.5, 136, 195);
+  doc.line(136, 195, 136, 202.5);
 
   doc.setFont("helvetica", "normal");
-  doc.text(`Cidade: __________________________    Data: ____ / ____ / 202____`, 30, 225);
-  doc.line(40, 250, 170, 250);
-  doc.text("ASSINATURA:", 12, 250); doc.text("NOME COMPLETO:", 12, 260);
-  doc.setFont("helvetica", "bold"); doc.text(up(d.nome_tutor), 45, 260);
-}
+  doc.setFontSize(8);
+  doc.text(`NOME: ${up(d.nome_tutor)}`, 12, 185);
+  doc.text(`DATA NASC.: ${d.data_nascimento || '–'}`, 142, 185);
+  doc.text(`RG: ${up(d.rg)}`, 12, 192.5);
+  doc.text(`CPF: ${d.cpf || '–'}`, 75, 192.5);
+  doc.text(`FONE: ${d.fone || '–'}`, 138, 192.5);
+  doc.text(`E-MAIL: ${up(d.email)}`, 12, 200);
+  doc.text(`CEP: ${d.cep || '–'}`, 138, 200);
+  doc.text(`ENDEREÇO: ${up(d.endereco)}`, 12, 207.5);
+  doc.text(`BAIRRO: ${up(d.bairro)}`, 138, 207.5);
 
-function gerarFichaAlinhada(d) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  adicionarFichaAoDoc(doc, d);
-  doc.save(`Ficha_${up(d.nome_animal)}.pdf`);
+  // --- TERMOS JURÍDICOS ---
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMO DE AUTORIZAÇÃO ANESTÉSICO, CIRÚRGICO E MICROCHIPAGEM", 105, 218, { align: "center" });
+  
+  doc.setFontSize(7.5); 
+  doc.setFont("helvetica", "italic");
+  const termoCompleto = "Autorizo a realização dos procedimentos anestésicos, de castração e microchipagem no animal identificado. Confirmo que após a saída do animal da Unidade Móvel, na qualidade de responsável, tomarei todos os cuidados necessários, observando o paciente e imediatamente comunicando ao médico veterinário quaisquer complications ou acidentes que venham a ocorrer. Declaro estar ciente que é minha responsabilidade realizar os exames pré-operatórios e que a não realização desses exames podem interferir no sucesso do procedimento. Declaro ter sido esclarecido acerca dos possíveis riscos inerentes aos procedimentos propostos, isento de quaisquer responsabilidades decorrentes de tais riscos.";
+  doc.text(termoCompleto, 10, 223, {maxWidth: 190, align: "justify"});
+
+  doc.setFont("helvetica", "bold"); doc.setFontSize(8);
+  doc.text("TERMO DE AUTORIZAÇÃO USO DE DADOS E IMAGENS", 105, 247, { align: "center" });
+  doc.setFont("helvetica", "italic"); doc.setFontSize(7.5);
+  doc.text("Autorizo a coleta, o registro e a utilização de minhas imagens e dos meus dados pessoais para fins de prestação de contas e contatos, de acordo com a Lei Geral de Proteção de Dados.", 10, 252, {maxWidth: 190});
+
+  // --- ASSINATURAS ---
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9.5);
+  doc.text(`Cidade: ${CONFIG.cidade} / SP`, 15, 270);
+  doc.text(`Data: ____ / ____ / 202____`, 135, 270);
+  doc.line(35, 282, 175, 282);
+  doc.text("ASSINATURA DO RESPONSÁVEL / TUTOR", 105, 286, { align: "center" });
+
+  // --- INFORMAÇÃO DO CASTRAMÓVEL (RODAPÉ) ---
+  doc.setFontSize(6.5); doc.setFont("helvetica", "normal");
+  doc.text("DELGADO SERVICOS VETERINARIOS LTDA | CNPJ 51.705.467/0001-78 | AV. SÃO PAULO, 65, SL01, SOROCABA-SP | (15) 3231-6179 / (15) 9 9702-0409 / (15) 9 9719-4299", 105, 294, { align: "center" });
 }
 </script>
 </body>
