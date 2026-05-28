@@ -78,15 +78,19 @@
     .sec-title { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--verde); margin-bottom: 14px; border-bottom: 2px solid var(--verde-cl); padding-bottom: 8px; }
     .busca { width: 100%; padding: 10px 14px; border: 1.5px solid var(--borda); border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 1rem; margin-bottom: 16px; }
     
-    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    thead th { background: var(--verde); color: white; padding: 10px 12px; text-align: left; font-size: 0.78rem; text-transform: uppercase; }
+    /* Melhoria na Tabela para Mobile */
+    #tabela-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 600px; } /* min-width garante que não amasse */
+    thead th { background: var(--verde); color: white; padding: 10px 12px; text-align: left; font-size: 0.78rem; text-transform: uppercase; white-space: nowrap; }
     tbody tr { border-bottom: 1px solid #e8ede8; }
     tbody tr:hover { background: var(--verde-cl); }
-    td { padding: 10px 12px; vertical-align: middle; }
+    td { padding: 10px 12px; vertical-align: middle; line-height: 1.4; }
     
-    .btn-mini-ver { padding: 5px 9px; background: var(--azul); color: white; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; margin-right: 4px; }
-    .btn-mini-pdf { padding: 5px 9px; background: var(--laranja); color: #1c2b1e; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; margin-right: 4px; }
-    .btn-deletar { padding: 5px 9px; background: var(--erro); color: white; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; }
+    /* Melhoria nos botões da Tabela */
+    .botoes-acao { display: flex; gap: 6px; justify-content: flex-end; }
+    .btn-mini-ver { padding: 5px 10px; background: var(--azul); color: white; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+    .btn-mini-pdf { padding: 5px 10px; background: var(--laranja); color: #1c2b1e; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+    .btn-deletar { padding: 5px 10px; background: var(--erro); color: white; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
     .modal-content { background: white; border-radius: var(--radius); max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -135,8 +139,8 @@
     <div class="card">
       <div class="sec-title">⬇️ Downloads Gabinete</div>
       <div class="acoes">
-        <button class="btn btn-todos" onclick="baixarTodosPDF()">🗂️ Baixar TODAS as Fichas (Ordem Alfabética)</button>
-        <button class="btn btn-csv"   onclick="exportarCSV()">📊 Exportar Lista (Excel/CSV)</button>
+        <button class="btn btn-todos" onclick="baixarTodosPDF()">🗂️ Baixar TODAS as Fichas</button>
+        <button class="btn btn-csv"   onclick="exportarCSV()">📊 Exportar Lista (Excel)</button>
       </div>
     </div>
 
@@ -271,13 +275,15 @@ function renderTabela() {
     html += `<tr>
       <td><span style="background:var(--verde); color:white; font-weight:800; font-size:0.75rem; padding:2px 8px; border-radius:99px;">#${String(i + 1).padStart(3,'0')}</span></td>
       <td><strong>${ins.nome_animal || '–'}</strong></td>
-      <td>${ins.especie || ''} · ${ins.sexo || ''}</td>
+      <td><strong>${ins.especie || ''}</strong><br><span style="font-size:0.85em; opacity:0.8;">${ins.sexo || ''}</span></td>
       <td>${ins.nome_tutor || '–'}</td>
-      <td>${ins.fone || '–'}</td>
-      <td style="text-align:right">
-        <button class="btn-mini-ver" onclick="visualizarInscricao(${ins.id})">👁️ Ver</button>
-        <button class="btn-mini-pdf" onclick="baixarUmPDF(${ins.id})">⬇️ PDF</button>
-        <button class="btn-deletar" onclick="excluirInscricao(${ins.id}, '${nomeLimpo}')">❌</button>
+      <td style="white-space: nowrap;">${ins.fone || '–'}</td>
+      <td>
+        <div class="botoes-acao">
+          <button class="btn-mini-ver" onclick="visualizarInscricao(${ins.id})">👁️ Ver</button>
+          <button class="btn-mini-pdf" onclick="baixarUmPDF(${ins.id})">⬇️ PDF</button>
+          <button class="btn-deletar" onclick="excluirInscricao(${ins.id}, '${nomeLimpo}')">❌</button>
+        </div>
       </td>
     </tr>`;
   });
@@ -378,13 +384,11 @@ async function excluirInscricao(id, nomeAnimal) {
 function adicionarFichaAoDoc(doc, d) {
   const up = s => (s || '').toUpperCase();
   
-  // --- CABEÇALHO ---
   doc.setFont("helvetica", "bold");
   doc.rect(10, 7, 190, 10, 'S');
   doc.setFontSize(11);
   doc.text("PRONTUÁRIO: CASTRAÇÃO E MICROCHIPAGEM PARA CÃES E GATOS", 105, 13.5, { align: "center" });
 
-  // --- DADOS DO PACIENTE ---
   doc.setFontSize(8.5);
   let tituloPaciente = "DADOS DO PACIENTE (ANIMAL)";
   let qtde = mapaCPFContagem[d.cpf];
@@ -415,7 +419,6 @@ function adicionarFichaAoDoc(doc, d) {
   doc.text(`HIST. DOENÇAS/CIRURGIAS: ${up(d.doente)}`, 12, 50.5);
   doc.text(`MEDICAMENTOS EM USO: ${up(d.medicamento)}`, 12, 53.5);
 
-  // --- PRONTUÁRIO MÉDICO CIRÚRGICO ---
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "bold");
   doc.text("PRONTUÁRIO DO ANIMAL (USO EXCLUSIVO VETERINÁRIO)", 10, 61.5);
@@ -483,7 +486,6 @@ function adicionarFichaAoDoc(doc, d) {
   doc.setFont("helvetica", "bold");
   doc.text("CARIMBO E ASSINATURA DO VETERINÁRIO RESPONSÁVEL", 105, 167, { align: "center" });
 
-  // --- DADOS DO RESPONSÁVEL ---
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "bold");
   doc.text("DADOS DO RESPONSÁVEL (TUTOR)", 10, 178);
@@ -505,7 +507,6 @@ function adicionarFichaAoDoc(doc, d) {
   doc.text(`ENDEREÇO: ${up(d.endereco)}`, 12, 207.5);
   doc.text(`BAIRRO: ${up(d.bairro)}`, 138, 207.5);
 
-  // --- TERMOS JURÍDICOS ---
   doc.setFontSize(8);
   doc.setFont("helvetica", "bold");
   doc.text("TERMO DE AUTORIZAÇÃO ANESTÉSICO, CIRÚRGICO E MICROCHIPAGEM", 105, 218, { align: "center" });
@@ -520,14 +521,12 @@ function adicionarFichaAoDoc(doc, d) {
   doc.setFont("helvetica", "italic"); doc.setFontSize(7.5);
   doc.text("Autorizo a coleta, o registro e a utilização de minhas imagens e dos meus dados pessoais para fins de prestação de contas e contatos, de acordo com a Lei Geral de Proteção de Dados.", 10, 252, {maxWidth: 190});
 
-  // --- ASSINATURAS ---
   doc.setFont("helvetica", "normal"); doc.setFontSize(9.5);
   doc.text(`Cidade: ${CONFIG.cidade} / SP`, 15, 270);
   doc.text(`Data: ____ / ____ / 202____`, 135, 270);
   doc.line(35, 282, 175, 282);
   doc.text("ASSINATURA DO RESPONSÁVEL / TUTOR", 105, 286, { align: "center" });
 
-  // --- INFORMAÇÃO DO CASTRAMÓVEL (RODAPÉ) ---
   doc.setFontSize(6.5); doc.setFont("helvetica", "normal");
   doc.text("DELGADO SERVICOS VETERINARIOS LTDA | CNPJ 51.705.467/0001-78 | AV. SÃO PAULO, 65, SL01, SOROCABA-SP | (15) 3231-6179 / (15) 9 9702-0409 / (15) 9 9719-4299", 105, 294, { align: "center" });
 }
