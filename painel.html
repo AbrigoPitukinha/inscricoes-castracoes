@@ -11,38 +11,10 @@
     const SUPABASE_URL = "https://nwmajgtiyxejeuwhkhbk.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8";
 
-    // 🐾 LISTA COMPLETA DE CIDADES E SENHAS 🐾
-    const EVENTOS = {
-      "miguelopolis-18.06": { cidade: "Miguelópolis", dataEvento: "18/06/2026", limiteVagas: 300, senhaPainel: "castramig1806" },
-      "taquaritinga-19.06": { cidade: "Taquaritinga", dataEvento: "19/06/2026", limiteVagas: 300, senhaPainel: "castrataq1906" },
-      "araraquara-20.06": { cidade: "Araraquara", dataEvento: "20/06/2026", limiteVagas: 300, senhaPainel: "castraara2006" },
-      "sao-carlos-21.06": { cidade: "São Carlos", dataEvento: "21/06/2026", limiteVagas: 300, senhaPainel: "castrascarlos2106" },
-      "sao-paulo-24.06": { cidade: "São Paulo", dataEvento: "24/06/2026", limiteVagas: 300, senhaPainel: "castrasp2406" },
-      "itatiba-25.06": { cidade: "Itatiba", dataEvento: "25/06/2026", limiteVagas: 300, senhaPainel: "castraita2506" },
-      "florida-paulista-27.06": { cidade: "Flórida Paulista", dataEvento: "27/06/2026", limiteVagas: 300, senhaPainel: "castraflo2706" },
-      "adamantina-28.06": { cidade: "Adamantina", dataEvento: "28/06/2026", limiteVagas: 300, senhaPainel: "castraada2806" },
-      "jau-01.07": { cidade: "Jaú", dataEvento: "01/07/2026", limiteVagas: 300, senhaPainel: "castrajau0107" },
-      "lencois-paulista-02.07": { cidade: "Lençóis Paulista", dataEvento: "02/07/2026", limiteVagas: 300, senhaPainel: "castralen0207" },
-      "sao-manuel-03.07": { cidade: "São Manuel", dataEvento: "03/07/2026", limiteVagas: 300, senhaPainel: "castramanu0307" },
-      "elias-fausto-04.07": { cidade: "Elias Fausto", dataEvento: "04/07/2026", limiteVagas: 300, senhaPainel: "castraeli0407" },
-      "indaiatuba-05.07": { cidade: "Indaiatuba", dataEvento: "05/07/2026", limiteVagas: 300, senhaPainel: "castraind0507" },
-      "franca-10.07": { cidade: "Franca", dataEvento: "10/07/2026", limiteVagas: 300, senhaPainel: "castrafra1007" },
-      "ribeirao-preto-11.07": { cidade: "Ribeirão Preto", dataEvento: "11/07/2026", limiteVagas: 300, senhaPainel: "castrarib1107" },
-      "ribeirao-preto-12.07": { cidade: "Ribeirão Preto", dataEvento: "12/07/2026", limiteVagas: 300, senhaPainel: "castrarib1207" },
-      "jacupiranga-17.07": { cidade: "Jacupiranga", dataEvento: "17/07/2026", limiteVagas: 300, senhaPainel: "castrajacu1707" },
-      "barra-do-turvo-18.07": { cidade: "Barra do Turvo", dataEvento: "18/07/2026", limiteVagas: 300, senhaPainel: "castrabarra1807" },
-      "valinhos-19.07": { cidade: "Valinhos", dataEvento: "19/07/2026", limiteVagas: 300, senhaPainel: "castraval1907" },
-      "jales-24.07": { cidade: "Jales", dataEvento: "24/07/2026", limiteVagas: 300, senhaPainel: "castrajales2407" },
-      "fernandopolis-25.07": { cidade: "Fernandópolis", dataEvento: "25/07/2026", limiteVagas: 300, senhaPainel: "castrafer2507" },
-      "votuporanga-26.07": { cidade: "Votuporanga", dataEvento: "26/07/2026", limiteVagas: 300, senhaPainel: "castravotu2607" },
-      "sao-paulo-25.09": { cidade: "São Paulo", dataEvento: "25/09/2026", limiteVagas: 300, senhaPainel: "castrasp2509" },
-      "sao-paulo-26.09": { cidade: "São Paulo", dataEvento: "26/09/2026", limiteVagas: 300, senhaPainel: "castrasp2609" },
-      "sao-paulo-mrsc-27.09": { cidade: "São Paulo MRSC", dataEvento: "27/09/2026", limiteVagas: 300, senhaPainel: "castramrsc2709" }
-    };
-
+    // 🐾 AS PALAVRAS-PASSE JÁ NÃO ESTÃO AQUI! ESTÃO SEGURAS NO SUPABASE 🐾
     const urlParams = new URLSearchParams(window.location.search);
     const eventoId = urlParams.get('evento');
-    const CONFIG = EVENTOS[eventoId]; 
+    let CONFIG = null; // Será preenchido apenas se a palavra-passe estiver correta
   </script>
 
   <style>
@@ -78,26 +50,16 @@
     .sec-title { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--verde); margin-bottom: 14px; border-bottom: 2px solid var(--verde-cl); padding-bottom: 8px; }
     .busca { width: 100%; padding: 10px 14px; border: 1.5px solid var(--borda); border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 1rem; margin-bottom: 16px; }
     
-    /* Melhoria na Tabela para Mobile */
     #tabela-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 650px; } /* min-width garante que não amasse */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 650px; }
     thead th { background: var(--verde); color: white; padding: 10px 12px; text-align: left; font-size: 0.78rem; text-transform: uppercase; white-space: nowrap; }
     tbody tr { border-bottom: 1px solid #e8ede8; }
     tbody tr:hover { background: var(--verde-cl); }
     td { padding: 10px 12px; vertical-align: middle; line-height: 1.4; }
     
-    /* Melhoria nos botões da Tabela */
     .botoes-acao { display: flex; gap: 6px; justify-content: flex-end; }
     .btn-mini-ver, .btn-mini-pdf, .btn-deletar { 
-      padding: 6px 10px; 
-      border: none; 
-      border-radius: 6px; 
-      font-size: 1rem;
-      cursor: pointer; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      transition: opacity 0.15s;
+      padding: 6px 10px; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity 0.15s;
     }
     .btn-mini-ver:hover, .btn-mini-pdf:hover, .btn-deletar:hover { opacity: 0.7; }
     .btn-mini-ver { background: var(--azul); color: white; }
@@ -125,9 +87,9 @@
 <div id="tela-bloqueio">
   <div class="card-bloqueio">
     <span style="font-size: 3rem; display:block; margin-bottom: 10px;">🔒</span>
-    <h2>Painel Restrito</h2>
-    <p id="desc-bloqueio">Verificando segurança...</p>
-    <button id="btn-inserir-senha" class="btn-senha" onclick="solicitarSenha()" style="display:none;">Digitar Senha</button>
+    <h2>Acesso ao Painel</h2>
+    <p id="desc-bloqueio">Por favor, insira a palavra-passe do evento para aceder aos dados.</p>
+    <button id="btn-inserir-senha" class="btn-senha" onclick="solicitarSenha()" style="display:none;">Digitar Palavra-passe</button>
   </div>
 </div>
 
@@ -229,25 +191,48 @@ let filtradas  = [];
 let mapaCPFContagem = {}; 
 
 window.onload = function() { 
-  if (!CONFIG) {
-    document.getElementById('desc-bloqueio').innerHTML = "<b>❌ Link Inválido!</b><br>Nenhum evento encontrado.";
+  if (!eventoId) {
+    document.getElementById('desc-bloqueio').innerHTML = "<b>❌ Link Inválido!</b><br>O identificador do evento não foi encontrado.";
     return;
   }
-  document.getElementById('desc-bloqueio').innerHTML = `Por favor, insira a senha de acesso da cidade de <b>${CONFIG.cidade}</b>.`;
   document.getElementById('btn-inserir-senha').style.display = "block";
   solicitarSenha(); 
 };
 
-function solicitarSenha() {
-  const entrada = prompt(`Digite a senha de segurança de ${CONFIG.cidade}:`);
-  if (entrada === CONFIG.senhaPainel) {
-    document.getElementById('tela-bloqueio').style.display = 'none';
-    document.getElementById('conteudo-painel').style.display = 'block';
-    document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
-    document.getElementById('stat-data').textContent = CONFIG.dataEvento;
-    carregar();
-  } else if (entrada !== null) {
-    alert("Senha incorreta!");
+// --- NOVA LÓGICA SEGURA DE VERIFICAÇÃO ---
+async function solicitarSenha() {
+  const entrada = prompt(`Digite a palavra-passe de segurança para aceder ao painel:`);
+  if (!entrada) return;
+
+  document.getElementById('desc-bloqueio').innerHTML = "A verificar a segurança...";
+
+  try {
+    // Comunica com a função invisível (RPC) que criámos no Supabase
+    const res = await sb.req(`rpc/verificar_acesso_painel`, {
+      method: 'POST',
+      body: { p_evento: eventoId, p_senha: entrada }
+    });
+
+    if (res && res.length > 0) {
+      // Sucesso! A base de dados confirmou a senha e devolveu os dados do evento
+      CONFIG = {
+        cidade: res[0].cidade,
+        dataEvento: res[0].data_evento,
+        limiteVagas: res[0].limite_vagas
+      };
+
+      document.getElementById('tela-bloqueio').style.display = 'none';
+      document.getElementById('conteudo-painel').style.display = 'block';
+      document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
+      document.getElementById('stat-data').textContent = CONFIG.dataEvento;
+      carregar(); 
+    } else {
+      alert("Acesso negado: Palavra-passe incorreta ou evento não encontrado!");
+      document.getElementById('desc-bloqueio').innerHTML = "Palavra-passe incorreta. Tente novamente.";
+    }
+  } catch(e) {
+    alert("Erro ao validar a palavra-passe no servidor.");
+    document.getElementById('desc-bloqueio').innerHTML = "Por favor, insira a palavra-passe do evento para aceder aos dados.";
   }
 }
 
@@ -375,7 +360,6 @@ async function baixarTodosPDF() {
 function exportarCSV() {
   if (!inscricoes.length) { alert('Nenhuma inscrição para exportar.'); return; }
   
-  // Array com todas as colunas que você coleta
   const cabecalho = [
     'Nº', 'Nome do Animal', 'Espécie', 'Sexo', 'Raça', 'Cor', 'Idade', 'Peso (KG)',
     'Vacinado?', 'Vermifugado?', 'Histórico Médico', 'Medicamentos',
@@ -389,10 +373,8 @@ function exportarCSV() {
     i.nome_tutor, i.data_nascimento, i.rg, i.cpf, i.fone, i.email, i.endereco, i.bairro, i.cep
   ].map(v => `"${(v || '').toString().replace(/"/g, '""')}"`));
   
-  // Uso do Ponto e Vírgula (;) para o Excel interpretar as colunas automaticamente no Brasil
   const csv = [cabecalho, ...linhas].map(r => r.join(';')).join('\n');
   
-  // O BOM \ufeff garante que os acentos (ç, ã, é) não fiquem quebrados
   const blob = new Blob(['\ufeff'+csv], { type: 'text/csv;charset=utf-8;' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -540,7 +522,7 @@ function adicionarFichaAoDoc(doc, d) {
   
   doc.setFontSize(7.5); 
   doc.setFont("helvetica", "italic");
-  const termoCompleto = "Autorizo a realização dos procedimentos anestésicos, de castração e microchipagem no animal identificado. Confirmo que após a saída do animal da Unidade Móvel, na qualidade de responsável, tomarei todos os cuidados necessários, observando o paciente e imediatamente comunicando ao médico veterinário quaisquer complications ou acidentes que venham a ocorrer. Declaro estar ciente que é minha responsabilidade realizar os exames pré-operatórios e que a não realização desses exames podem interferir no sucesso do procedimento. Declaro ter sido esclarecido acerca dos possíveis riscos inerentes aos procedimentos propostos, isento de quaisquer responsabilidades decorrentes de tais riscos.";
+  const termoCompleto = "Autorizo a realização dos procedimentos anestésicos, de castração e microchipagem no animal identificado. Confirmo que após a saída do animal da Unidade Móvel, na qualidade de responsável, tomarei todos os cuidados necessários, observando o paciente e imediatamente comunicando ao médico veterinário quaisquer complicações ou acidentes que venham a ocorrer. Declaro estar ciente que é minha responsabilidade realizar os exames pré-operatórios e que a não realização desses exames podem interferir no sucesso do procedimento. Declaro ter sido esclarecido acerca dos possíveis riscos inerentes aos procedimentos propostos, isento de quaisquer responsabilidades decorrentes de tais riscos.";
   doc.text(termoCompleto, 10, 223, {maxWidth: 190, align: "justify"});
 
   doc.setFont("helvetica", "bold"); doc.setFontSize(8);
@@ -548,8 +530,9 @@ function adicionarFichaAoDoc(doc, d) {
   doc.setFont("helvetica", "italic"); doc.setFontSize(7.5);
   doc.text("Autorizo a coleta, o registro e a utilização de minhas imagens e dos meus dados pessoais para fins de prestação de contas e contatos, de acordo com a Lei Geral de Proteção de Dados.", 10, 252, {maxWidth: 190});
 
+  let validCidade = CONFIG ? CONFIG.cidade : "";
   doc.setFont("helvetica", "normal"); doc.setFontSize(9.5);
-  doc.text(`Cidade: ${CONFIG.cidade} / SP`, 15, 270);
+  doc.text(`Cidade: ${validCidade} / SP`, 15, 270);
   doc.text(`Data: ____ / ____ / 202____`, 135, 270);
   doc.line(35, 282, 175, 282);
   doc.text("ASSINATURA DO RESPONSÁVEL / TUTOR", 105, 286, { align: "center" });
