@@ -7,22 +7,36 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
 
   <script>
-    const SUPABASE_URL = "https://nwmajgtiyxejeuwhkhbk.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8";
+  const SUPABASE_URL = "https://nwmajgtiyxejeuwhkhbk.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8";
 
-    // O formulário agora identifica o evento pela URL (ex: ?evento=itatiba-25.06)
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventoId = urlParams.get('evento');
-    
-    // CONFIG agora será buscado diretamente da tabela no Supabase (se necessário)
-    // ou apenas usamos o eventoId para salvar o registro na tabela de inscrições.
-    let CONFIG = { cidade: "" }; 
-    
-    // Opcional: Se precisar carregar dados do evento (como nome da cidade), 
-    // você pode fazer uma busca rápida no Supabase aqui, 
-    // mas para o formulário de inscrição, o eventoId na URL já resolve.
-    CONFIG.cidade = eventoId; 
-  </script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventoId = urlParams.get('evento');
+  let CONFIG = null; 
+
+  async function carregarDadosEvento() {
+    if (!eventoId) return;
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/config_eventos?evento_id=eq.${eventoId}`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      });
+      const data = await response.json();
+      if (data && data.length > 0) {
+        CONFIG = data[0]; 
+        // Atualiza a tela com o nome da cidade e a data
+        document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.data_evento}`;
+        document.getElementById('card-form').style.display = 'block';
+        verificarVagas(); // Agora a função verificarVagas encontrará o limiteVagas no CONFIG
+      } else {
+        document.getElementById('msg-link-invalido').style.display = 'block';
+      }
+    } catch (err) {
+      console.error("Erro ao carregar dados:", err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", carregarDadosEvento);
+</script>
 
   <style>
     :root {
