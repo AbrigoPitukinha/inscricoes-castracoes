@@ -10,38 +10,18 @@
     const SUPABASE_URL = "https://nwmajgtiyxejeuwhkhbk.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bWFqZ3RpeXhlamV1d2hraGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMTE5OTEsImV4cCI6MjA5NDY4Nzk5MX0.npZbWZeDOyMgoTHqSWuNC8JwTWZ20_EfyudbS228QX8";
 
-    // 🐾 LISTA COMPLETA DE CIDADES 🐾
-    const EVENTOS = {
-      "miguelopolis-18.06": { cidade: "Miguelópolis", dataEvento: "18/06/2026", limiteVagas: 300, senhaPainel: "castramig1806" },
-      "taquaritinga-19.06": { cidade: "Taquaritinga", dataEvento: "19/06/2026", limiteVagas: 300, senhaPainel: "castrataq1906" },
-      "araraquara-20.06": { cidade: "Araraquara", dataEvento: "20/06/2026", limiteVagas: 300, senhaPainel: "castraara2006" },
-      "sao-carlos-21.06": { cidade: "São Carlos", dataEvento: "21/06/2026", limiteVagas: 300, senhaPainel: "castrasao2106" },
-      "sao-paulo-24.06": { cidade: "São Paulo", dataEvento: "24/06/2026", limiteVagas: 300, senhaPainel: "castrasao2406" },
-      "itatiba-25.06": { cidade: "Itatiba", dataEvento: "25/06/2026", limiteVagas: 300, senhaPainel: "castraita2506" },
-      "florida-paulista-27.06": { cidade: "Flórida Paulista", dataEvento: "27/06/2026", limiteVagas: 300, senhaPainel: "castraflo2706" },
-      "adamantina-28.06": { cidade: "Adamantina", dataEvento: "28/06/2026", limiteVagas: 300, senhaPainel: "castraada2806" },
-      "jau-01.07": { cidade: "Jaú", dataEvento: "01/07/2026", limiteVagas: 300, senhaPainel: "castrajau0107" },
-      "lencois-paulista-02.07": { cidade: "Lençóis Paulista", dataEvento: "02/07/2026", limiteVagas: 300, senhaPainel: "castralen0207" },
-      "sao-manuel-03.07": { cidade: "São Manuel", dataEvento: "03/07/2026", limiteVagas: 300, senhaPainel: "castrasao0307" },
-      "elias-fausto-04.07": { cidade: "Elias Fausto", dataEvento: "04/07/2026", limiteVagas: 300, senhaPainel: "castraeli0407" },
-      "indaiatuba-05.07": { cidade: "Indaiatuba", dataEvento: "05/07/2026", limiteVagas: 300, senhaPainel: "castraind0507" },
-      "franca-10.07": { cidade: "Franca", dataEvento: "10/07/2026", limiteVagas: 300, senhaPainel: "castrafra1007" },
-      "ribeirao-preto-11.07": { cidade: "Ribeirão Preto", dataEvento: "11/07/2026", limiteVagas: 300, senhaPainel: "castrarib1107" },
-      "ribeirao-preto-12.07": { cidade: "Ribeirão Preto", dataEvento: "12/07/2026", limiteVagas: 300, senhaPainel: "castrarib1207" },
-      "jacupiranga-17.07": { cidade: "Jacupiranga", dataEvento: "17/07/2026", limiteVagas: 300, senhaPainel: "castrajac1707" },
-      "barra-do-turvo-18.07": { cidade: "Barra do Turvo", dataEvento: "18/07/2026", limiteVagas: 300, senhaPainel: "castrabar1807" },
-      "valinhos-19.07": { cidade: "Valinhos", dataEvento: "19/07/2026", limiteVagas: 300, senhaPainel: "castraval1907" },
-      "jales-24.07": { cidade: "Jales", dataEvento: "24/07/2026", limiteVagas: 300, senhaPainel: "castrajal2407" },
-      "fernandopolis-25.07": { cidade: "Fernandópolis", dataEvento: "25/07/2026", limiteVagas: 300, senhaPainel: "castrafer2507" },
-      "votuporanga-26.07": { cidade: "Votuporanga", dataEvento: "26/07/2026", limiteVagas: 300, senhaPainel: "castravot2607" },
-      "sao-paulo-25.09": { cidade: "São Paulo", dataEvento: "25/09/2026", limiteVagas: 300, senhaPainel: "castrasao2509" },
-      "sao-paulo-26.09": { cidade: "São Paulo", dataEvento: "26/09/2026", limiteVagas: 300, senhaPainel: "castrasao2609" },
-      "sao-paulo-mrsc-27.09": { cidade: "São Paulo MRSC", dataEvento: "27/09/2026", limiteVagas: 300, senhaPainel: "castrasao2709" }
-    };
-
+    // O formulário agora identifica o evento pela URL (ex: ?evento=itatiba-25.06)
     const urlParams = new URLSearchParams(window.location.search);
     const eventoId = urlParams.get('evento');
-    const CONFIG = EVENTOS[eventoId]; 
+    
+    // CONFIG agora será buscado diretamente da tabela no Supabase (se necessário)
+    // ou apenas usamos o eventoId para salvar o registro na tabela de inscrições.
+    let CONFIG = { cidade: "" }; 
+    
+    // Opcional: Se precisar carregar dados do evento (como nome da cidade), 
+    // você pode fazer uma busca rápida no Supabase aqui, 
+    // mas para o formulário de inscrição, o eventoId na URL já resolve.
+    CONFIG.cidade = eventoId; 
   </script>
 
   <style>
