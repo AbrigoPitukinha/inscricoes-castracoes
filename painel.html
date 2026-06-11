@@ -13,7 +13,8 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const eventoId = urlParams.get('evento');
-    let CONFIG = null; // Será preenchido apenas se a palavra-passe estiver correta
+    let CONFIG = null;
+let SENHA_PAINEL = null; // Será preenchido apenas se a palavra-passe estiver correta
   </script>
 
   <style>
@@ -202,15 +203,16 @@ window.onload = function() {
 async function solicitarSenha() {
   const entrada = prompt(`Digite a palavra-passe de segurança para aceder ao painel:`);
   if (!entrada) return;
+SENHA_PAINEL = entrada;
 
   document.getElementById('desc-bloqueio').innerHTML = "A verificar a segurança...";
 
   try {
     // Comunica com a função invisível (RPC) que criámos no Supabase
-    const res = await sb.req(`rpc/verificar_acesso_painel`, {
-      method: 'POST',
-      body: { p_evento: eventoId, p_senha: entrada }
-    });
+    const res = await sb.req(`rpc/verificar_acesso_painel_com_dados`, {
+  method: 'POST',
+  body: { p_evento: eventoId, p_senha: entrada }
+});
 
     if (res && res.length > 0) {
       // Sucesso! A base de dados confirmou a senha e devolveu os dados do evento
@@ -237,12 +239,18 @@ async function solicitarSenha() {
 
 async function carregar() {
   try {
-    const res = await sb.req(`inscricoes?cidade=eq.${CONFIG.cidade}&order=id.asc`);
-    inscricoes = Array.isArray(res) ? res : [];
+    const res = await sb.req(`rpc/verificar_acesso_painel_com_dados`, {
+      method: 'POST',
+      body: { p_evento: eventoId, p_senha: SENHA_PAINEL }
+    });
+
+    inscricoes = Array.isArray(res) ? res.filter(item => item.id !== null) : [];
     
     mapaCPFContagem = {};
     inscricoes.forEach(ins => {
-      if (ins.cpf) { mapaCPFContagem[ins.cpf] = (mapaCPFContagem[ins.cpf] || 0) + 1; }
+      if (ins.cpf) {
+        mapaCPFContagem[ins.cpf] = (mapaCPFContagem[ins.cpf] || 0) + 1;
+      }
     });
 
     filtradas = [...inscricoes];
@@ -383,10 +391,25 @@ function exportarCSV() {
 
 async function excluirInscricao(id, nomeAnimal) {
   if (!confirm(`Excluir inscrição de "${nomeAnimal}"?`)) return;
+
   try {
-    await sb.req(`inscricoes?id=eq.${id}`, { method: 'DELETE' });
-    carregar(); 
-  } catch(e) { alert(e.message); }
+    const res = await sb.req(`rpc/excluir_inscricao_painel`, {
+      method: 'POST',
+      body: {
+        p_evento: eventoId,
+        p_senha: SENHA_PAINEL,
+        p_id: id
+      }
+    });
+
+    if (res === true || res === "true") {
+      carregar();
+    } else {
+      alert("Não foi possível excluir. Senha inválida ou inscrição não pertence a este evento.");
+    }
+  } catch(e) {
+    alert(e.message);
+  }
 }
 
 function adicionarFichaAoDoc(doc, d) {
