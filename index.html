@@ -264,17 +264,27 @@ verificarVagas();
 });
 
 async function verificarVagas() {
-try {
-const data = await sb.req(
-`inscricoes?cidade=eq.${CONFIG.cidade}&select=id`,
-{ headers: { 'Prefer': 'count=exact' }, method: 'GET' }
-);
-let totalInscritos = Array.isArray(data) ? data.length : 0;
-if (totalInscritos >= CONFIG.limiteVagas) {
-document.getElementById('card-form').style.display = 'none';
-document.getElementById('msg-esgotado').style.display = 'block';
-}
-} catch(e) { console.log(e); }
+  try {
+    const data = await sb.req(`rpc/status_evento_inscricao`, {
+      method: 'POST',
+      body: { p_evento: eventoId }
+    });
+
+    const status = Array.isArray(data) ? data[0] : null;
+
+    if (!status) {
+      document.getElementById('card-form').style.display = 'none';
+      document.getElementById('msg-link-invalido').style.display = 'block';
+      return;
+    }
+
+    if (status.esgotado) {
+      document.getElementById('card-form').style.display = 'none';
+      document.getElementById('msg-esgotado').style.display = 'block';
+    }
+  } catch(e) {
+    console.log(e);
+  }
 }
 
 document.getElementById('cpf').addEventListener('input', function(){
