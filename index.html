@@ -372,9 +372,9 @@ data_nascimento: document.getElementById('dataNasc').value.trim()
 
 try {
 await sb.req('inscricoes', {
-method: 'POST',
-prefer: 'return=representation',
-body: payload
+  method: 'POST',
+  prefer: 'return=minimal',
+  body: payload
 });
 
 document.getElementById('card-form').style.display = 'none';
