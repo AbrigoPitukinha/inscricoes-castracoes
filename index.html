@@ -384,11 +384,21 @@ data_nascimento: document.getElementById('dataNasc').value.trim()
 };
 
 try {
-await sb.req('inscricoes', {
+const resultado = await sb.req('rpc/criar_inscricao_evento', {
   method: 'POST',
-  prefer: 'return=minimal',
-  body: payload
+  body: { p_dados: payload }
 });
+
+if (!resultado.sucesso) {
+  if (resultado.erro === 'Vagas esgotadas') {
+    document.getElementById('card-form').style.display = 'none';
+    document.getElementById('msg-esgotado').style.display = 'block';
+    window.scrollTo(0,0);
+    return;
+  }
+
+  throw new Error(resultado.erro || 'Erro ao enviar inscrição.');
+}
 
 document.getElementById('card-form').style.display = 'none';
 document.getElementById('msg-sucesso').style.display = 'block';
