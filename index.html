@@ -51,7 +51,7 @@ header p { margin-top: 6px; font-size: 0.95rem; opacity: 0.88; }
 .btn-submit:active { transform: scale(0.98); }
 .btn-submit:disabled { background: #8ab89a; cursor: not-allowed; }
 
-#msg-esgotado, #msg-sucesso, #msg-erro, #msg-link-invalido { display: none; max-width: 680px; margin: 30px auto; padding: 34px 24px; border-radius: var(--radius); text-align: center; }
+#msg-esgotado, #msg-encerrado, #msg-sucesso, #msg-erro, #msg-link-invalido { display: none; max-width: 680px; margin: 30px auto; padding: 34px 24px; border-radius: var(--radius); text-align: center; }
 #msg-esgotado { background: #fff3e0; border: 2px solid #e67e22; color: #7f4e00; }
 #msg-sucesso { background: var(--verde-cl); border: 2px solid var(--verde); color: var(--verde); }
 #msg-sucesso h2 { font-family: 'Fraunces', serif; font-size: 1.6rem; margin-bottom: 14px; }
@@ -189,8 +189,15 @@ header p { margin-top: 6px; font-size: 0.95rem; opacity: 0.88; }
 </div>
 
 <div id="msg-esgotado">
-<h2>😔 Vagas Preenchidas!</h2>
-<p>No momento, todas as vagas para nosso evento foram reservadas. Nossa equipe está trabalhando para viabilizar novos eventos de castração gratuita.</p>
+  <h2>😔 Vagas Preenchidas!</h2>
+  <p>No momento, todas as vagas para nosso evento foram reservadas.</p>
+  <p>Nossa equipe está trabalhando para viabilizar novos eventos de castração gratuita.</p>
+</div>
+
+<div id="msg-encerrado">
+  <h2>🔒 Inscrições Encerradas!</h2>
+  <p>O período de inscrições para este evento foi encerrado.</p>
+  <p>Nossa equipe está trabalhando para viabilizar novos eventos de castração gratuita.</p>
 </div>
 
 <div id="msg-sucesso">
@@ -253,10 +260,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
 
     if (status.esgotado) {
-      document.getElementById('msg-esgotado').style.display = 'block';
-    } else {
-      document.getElementById('card-form').style.display = 'block';
-    }
+  document.getElementById('card-form').style.display = 'none';
+
+  if (status.motivo_bloqueio === 'encerrado') {
+    document.getElementById('msg-encerrado').style.display = 'block';
+  } else {
+    document.getElementById('msg-esgotado').style.display = 'block';
+  }
+} else {
+  document.getElementById('card-form').style.display = 'block';
+}
 
   } catch (e) {
     console.log(e);
