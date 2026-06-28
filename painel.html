@@ -15,6 +15,7 @@
     const eventoId = urlParams.get('evento');
     let CONFIG = null;
 let SENHA_PAINEL = null; // Será preenchido apenas se a palavra-passe estiver correta
+    let INSCRICOES_ABERTAS = true;
   </script>
 
   <style>
@@ -109,6 +110,16 @@ let SENHA_PAINEL = null; // Será preenchido apenas se a palavra-passe estiver c
         <div class="stat"><div class="num" id="stat-data">–</div><div class="leg">Data do evento</div></div>
       </div>
     </div>
+
+    <div class="card" id="card-status-inscricoes">
+  <div class="sec-title">🔐 Status das Inscrições</div>
+  <p id="txt-status-inscricoes" style="font-weight:800; margin-bottom:12px;">
+    Carregando status...
+  </p>
+  <button class="btn btn-csv" id="btn-status-inscricoes" onclick="alterarStatusInscricoes()">
+    Alterar status
+  </button>
+</div>
 
     <div class="card">
       <div class="sec-title">⬇️ Downloads</div>
@@ -217,15 +228,18 @@ SENHA_PAINEL = entrada;
     if (res && res.length > 0) {
       // Sucesso! A base de dados confirmou a senha e devolveu os dados do evento
       CONFIG = {
-        cidade: res[0].cidade,
-        dataEvento: res[0].data_evento,
-        limiteVagas: res[0].limite_vagas
-      };
+  cidade: res[0].cidade,
+  dataEvento: res[0].data_evento,
+  limiteVagas: res[0].limite_vagas
+};
+
+INSCRICOES_ABERTAS = res[0].inscricoes_abertas !== false;
 
       document.getElementById('tela-bloqueio').style.display = 'none';
       document.getElementById('conteudo-painel').style.display = 'block';
       document.getElementById('badge-cidade').textContent = `📍 ${CONFIG.cidade} — ${CONFIG.dataEvento}`;
       document.getElementById('stat-data').textContent = CONFIG.dataEvento;
+      atualizarCardStatusInscricoes();
       carregar(); 
     } else {
       alert("Acesso negado: Palavra-passe incorreta ou evento não encontrado!");
@@ -261,6 +275,58 @@ async function carregar() {
   }
 }
 
+  function atualizarCardStatusInscricoes() {
+  const txt = document.getElementById('txt-status-inscricoes');
+  const btn = document.getElementById('btn-status-inscricoes');
+
+  if (!txt || !btn) return;
+
+  if (INSCRICOES_ABERTAS) {
+    txt.textContent = "🟢 Inscrições abertas";
+    btn.textContent = "Encerrar inscrições";
+  } else {
+    txt.textContent = "🔴 Inscrições encerradas";
+    btn.textContent = "Reabrir inscrições";
+  }
+}
+
+async function alterarStatusInscricoes() {
+  const novoStatus = !INSCRICOES_ABERTAS;
+
+  const msg = novoStatus
+    ? "Deseja reabrir as inscrições deste evento?"
+    : "Tem certeza que deseja encerrar as inscrições deste evento?";
+
+  if (!confirm(msg)) return;
+
+  try {
+    const res = await sb.req(`rpc/alterar_status_inscricoes`, {
+      method: 'POST',
+      body: {
+        p_evento: eventoId,
+        p_senha: SENHA_PAINEL,
+        p_abertas: novoStatus
+      }
+    });
+
+    if (!res.sucesso) {
+      alert(res.erro || "Não foi possível alterar o status.");
+      return;
+    }
+
+    INSCRICOES_ABERTAS = res.inscricoes_abertas === true;
+    atualizarCardStatusInscricoes();
+
+    alert(INSCRICOES_ABERTAS
+      ? "Inscrições reabertas com sucesso."
+      : "Inscrições encerradas com sucesso."
+    );
+
+  } catch(e) {
+    alert(e.message);
+  }
+}
+  
 function atualizarStats() {
   const total = inscricoes.length;
   document.getElementById('stat-total').textContent  = total;
