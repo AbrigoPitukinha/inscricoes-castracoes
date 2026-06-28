@@ -19,6 +19,57 @@ let SENHA_PAINEL = null; // Será preenchido apenas se a palavra-passe estiver c
   </script>
 
   <style>
+
+    .status-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 18px 24px;
+  flex-wrap: wrap;
+}
+
+.status-label {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--verde);
+}
+
+.status-text {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--verde);
+}
+
+.btn-status-inline {
+  background: #eaf0ea;
+  color: var(--verde);
+  border: 2px solid var(--borda);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.btn-status-inline:hover {
+  opacity: 0.85;
+}
+
+@media(max-width: 600px) {
+  .status-inline {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .btn-status-inline {
+    width: 100%;
+  }
+}
+    
     :root { --verde: #1a7a4a; --verde-cl:#e8f5ee; --laranja: #f5a623; --cinza: #f4f6f4; --texto: #1c2b1e; --borda: #ccd8cc; --erro: #c0392b; --azul: #2980b9; --radius: 12px; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Nunito', sans-serif; background: var(--cinza); color: var(--texto); min-height: 100vh; }
@@ -111,13 +162,15 @@ let SENHA_PAINEL = null; // Será preenchido apenas se a palavra-passe estiver c
       </div>
     </div>
 
-    <div class="card" id="card-status-inscricoes">
-  <div class="sec-title">🔐 Status das Inscrições</div>
-  <p id="txt-status-inscricoes" style="font-weight:800; margin-bottom:12px;">
-    Carregando status...
-  </p>
-  <button class="btn btn-csv" id="btn-status-inscricoes" onclick="alterarStatusInscricoes()">
-    Alterar status
+    <div class="card status-inline" id="card-status-inscricoes">
+  <div class="status-label">🔐 Status das Inscrições:</div>
+
+  <div class="status-text" id="txt-status-inscricoes">
+    🟢 Inscrições abertas
+  </div>
+
+  <button class="btn-status-inline" id="btn-status-inscricoes" onclick="alterarStatusInscricoes()">
+    Encerrar inscrições
   </button>
 </div>
 
