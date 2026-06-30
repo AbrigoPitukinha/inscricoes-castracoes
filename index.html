@@ -322,11 +322,19 @@ let v = this.value.replace(/\D/g,'').slice(0,8);
 v = v.replace(/(\d{2})(\d)/,'$1/$2').replace(/(\d{2})(\d)/,'$1/$2');
 this.value = v;
 });
-document.getElementById('fone').addEventListener('input', function(){
-let v = this.value.replace(/\D/g,'').slice(0,11);
-v = v.replace(/^(\d{2})(\d)/g,"($1) $2").replace(/(\d{5})(\d)/,"$1-$2");
-this.value = v;
-});
+function aplicarMascaraCelular(id) {
+  const campo = document.getElementById(id);
+  if (!campo) return;
+
+  campo.addEventListener('input', function(){
+    let v = this.value.replace(/\D/g,'').slice(0,11);
+    v = v.replace(/^(\d{2})(\d)/g,"($1) $2").replace(/(\d{5})(\d)/,"$1-$2");
+    this.value = v;
+  });
+}
+
+aplicarMascaraCelular('fone');
+aplicarMascaraCelular('fone2');
 
 function validarCPFReal(cpf) {
 cpf = cpf.replace(/\D/g, '');
@@ -364,10 +372,20 @@ return;
 
 const campoFone = document.getElementById('fone');
 const foneLimpo = campoFone.value.replace(/\D/g, '');
-if(foneLimpo.length < 10 || foneLimpo.length > 11) {
-campoFone.classList.add('erro');
-alert('Por favor, informe um número de telefone válido com o código de área (DDD).');
-return;
+
+if (foneLimpo.length !== 11 || foneLimpo[2] !== '9') {
+  campoFone.classList.add('erro');
+  alert('Por favor, informe um número de celular válido com WhatsApp. Exemplo: (19) 99999-9999');
+  return;
+}
+
+const campoFone2 = document.getElementById('fone2');
+const fone2Limpo = campoFone2.value.replace(/\D/g, '');
+
+if (fone2Limpo && (fone2Limpo.length !== 11 || fone2Limpo[2] !== '9')) {
+  campoFone2.classList.add('erro');
+  alert('O telefone alternativo precisa ser um número de celular válido. Exemplo: (19) 99999-9999');
+  return;
 }
 
 const btn = document.getElementById('btn-enviar');
