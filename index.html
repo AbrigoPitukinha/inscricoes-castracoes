@@ -160,13 +160,18 @@ header p { margin-top: 6px; font-size: 0.95rem; opacity: 0.88; }
 <input type="text" id="cpf" required placeholder="000.000.000-00" maxlength="14">
 </div>
 <div class="field">
-<label>E-mail *</label>
-        <input type="email" id="email" required>
-        <input type="email" id="email">
+  <label>E-mail *</label>
+  <input type="email" id="email" required>
 </div>
+
 <div class="field full">
-<label>Telefone / WhatsApp *</label>
-<input type="text" id="fone" required placeholder="(00) 00000-0000" maxlength="15">
+  <label>Telefone / WhatsApp *</label>
+  <input type="text" id="fone" required placeholder="(00) 90000-0000" maxlength="15">
+</div>
+
+<div class="field full">
+  <label>Telefone alternativo</label>
+  <input type="text" id="fone2" placeholder="(00) 90000-0000" maxlength="15">
 </div>
 <div class="field full">
 <label>Endereço completo *</label>
@@ -390,6 +395,7 @@ rg:              gv('rg'),
 cpf:             document.getElementById('cpf').value.trim(),
 email:           document.getElementById('email').value.trim().toLowerCase(),
 fone:            document.getElementById('fone').value.trim(),
+fone2:           document.getElementById('fone2').value.trim(),
 endereco:        gv('endereco'),
 bairro:          gv('bairro'),
 cep:             document.getElementById('cep').value.trim(),
